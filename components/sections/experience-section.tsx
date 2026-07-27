@@ -19,37 +19,43 @@ export function ExperienceSection({ dictionary }: ExperienceSectionProps) {
           title={dictionary.experience.title}
         />
       </Reveal>
-      <div className="experience-card">
-        <div className="experience-card__heading">
-          <div>
-            <h3>{dictionary.experience.company}</h3>
-            <p>{dictionary.experience.role}</p>
+      <Reveal direction="left" distance={38}>
+        <div className="experience-card">
+          <div className="experience-card__heading">
+            <div>
+              <h3>{dictionary.experience.company}</h3>
+              <p>{dictionary.experience.role}</p>
+            </div>
+            <span>{dictionary.experience.period}</span>
           </div>
-          <span>{dictionary.experience.period}</span>
+          <p className="experience-card__description">
+            <strong>{dictionary.experience.descriptionLead}</strong>
+            {dictionary.experience.description}
+          </p>
+          <ul>
+            {dictionary.experience.facts.map((fact, index) => (
+              <li key={fact}>
+                <span aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                {fact}
+              </li>
+            ))}
+          </ul>
         </div>
-        <p className="experience-card__description">
-          <strong>{dictionary.experience.descriptionLead}</strong>
-          {dictionary.experience.description}
-        </p>
-        <ul>
-          {dictionary.experience.facts.map((fact, index) => (
-            <li key={fact}>
-              <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-              {fact}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="education-card">
-        <div>
-          <span>{dictionary.experience.educationLabel}</span>
-          <strong>{dictionary.experience.educationDegree}</strong>
+      </Reveal>
+      <Reveal direction="right" distance={30}>
+        <div className="education-card">
+          <div>
+            <span>{dictionary.experience.educationLabel}</span>
+            <strong>{dictionary.experience.educationDegree}</strong>
+          </div>
+          <div>
+            <p>{dictionary.experience.educationInstitution}</p>
+            <span>{dictionary.experience.educationPeriod}</span>
+          </div>
         </div>
-        <div>
-          <p>{dictionary.experience.educationInstitution}</p>
-          <span>{dictionary.experience.educationPeriod}</span>
-        </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

@@ -49,20 +49,27 @@ export function ContactSection({ dictionary }: ContactSectionProps) {
       </Reveal>
       <div className="contact-grid">
         {links.map((link, index) => (
-          <a
+          <Reveal
             key={link.href}
-            data-primary={index === 0}
-            href={link.href}
-            target={link.href.startsWith("http") ? "_blank" : undefined}
-            rel={link.href.startsWith("http") ? "noreferrer" : undefined}
+            className={index === 0 ? "contact-grid__primary" : undefined}
+            delay={index * 0.06}
+            direction={index % 2 === 0 ? "left" : "right"}
+            distance={28}
           >
-            <span className="contact-grid__number" aria-hidden="true">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-            <span className="contact-grid__label">{link.label}</span>
-            <strong>{link.value}</strong>
-            <ArrowUpRight aria-hidden="true" size={24} strokeWidth={1.3} />
-          </a>
+            <a
+              data-primary={index === 0}
+              href={link.href}
+              target={link.href.startsWith("http") ? "_blank" : undefined}
+              rel={link.href.startsWith("http") ? "noreferrer" : undefined}
+            >
+              <span className="contact-grid__number" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <span className="contact-grid__label">{link.label}</span>
+              <strong>{link.value}</strong>
+              <ArrowUpRight aria-hidden="true" size={24} strokeWidth={1.3} />
+            </a>
+          </Reveal>
         ))}
       </div>
     </section>

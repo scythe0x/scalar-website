@@ -36,20 +36,22 @@ export function AboutSection({ dictionary }: AboutSectionProps) {
           ))}
         </div>
       </div>
-      <div className="proof-strip" aria-label="Selected professional facts">
-        <div>
-          <strong>2017</strong>
-          <span>{dictionary.about.sinceLabel}</span>
+      <Reveal amount={0.25}>
+        <div className="proof-strip" aria-label="Selected professional facts">
+          <div>
+            <strong>2017</strong>
+            <span>{dictionary.about.sinceLabel}</span>
+          </div>
+          <div>
+            <strong>{dictionary.about.scaleValue}</strong>
+            <span>{dictionary.about.scaleLabel}</span>
+          </div>
+          <div>
+            <strong>{dictionary.about.launchValue}</strong>
+            <span>{dictionary.about.launchLabel}</span>
+          </div>
         </div>
-        <div>
-          <strong>{dictionary.about.scaleValue}</strong>
-          <span>{dictionary.about.scaleLabel}</span>
-        </div>
-        <div>
-          <strong>{dictionary.about.launchValue}</strong>
-          <span>{dictionary.about.launchLabel}</span>
-        </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

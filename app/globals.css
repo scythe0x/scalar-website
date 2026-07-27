@@ -149,6 +149,17 @@ ol {
   backdrop-filter: blur(18px);
 }
 
+.scroll-progress {
+  position: fixed;
+  inset: var(--header-height) 0 auto;
+  z-index: 55;
+  height: 2px;
+  background: var(--blue);
+  box-shadow: 0 0 16px rgba(92, 126, 255, 0.72);
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+
 .site-header__inner {
   width: min(100%, var(--content-max));
   height: 100%;
@@ -259,6 +270,7 @@ ol {
 .hero__title-wrap {
   position: relative;
   padding: 0 0 clamp(1.5rem, 3vh, 2.6rem);
+  overflow: hidden;
 }
 
 .hero h1 {
@@ -269,6 +281,11 @@ ol {
   letter-spacing: -0.085em;
   text-indent: -0.045em;
   white-space: nowrap;
+}
+
+.hero h1 > span {
+  display: block;
+  will-change: transform;
 }
 
 .hero__information {
@@ -367,7 +384,6 @@ ol {
   gap: clamp(2rem, 6vw, 8rem);
   margin-inline: -1.25rem;
   padding: 1.35rem 1.25rem 1.6rem;
-  background: linear-gradient(90deg, rgba(3, 4, 5, 0.92), rgba(3, 4, 5, 0.7));
 }
 
 .section-heading__meta {
@@ -434,6 +450,10 @@ ol {
   font-size: 0.66rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+.work-group > div {
+  position: relative;
 }
 
 .project-row {
@@ -809,7 +829,6 @@ ol {
   align-items: end;
   margin-inline: -1.25rem;
   padding: 1.35rem 1.25rem 1.6rem;
-  background: linear-gradient(90deg, rgba(3, 4, 5, 0.92), rgba(3, 4, 5, 0.7));
 }
 
 .contact-section__heading h2 {
@@ -834,6 +853,14 @@ ol {
   border-left: 1px solid var(--line);
 }
 
+.contact-grid > div {
+  min-width: 0;
+}
+
+.contact-grid > .contact-grid__primary {
+  grid-column: 1 / -1;
+}
+
 .contact-grid a {
   position: relative;
   min-height: 12rem;
@@ -846,6 +873,7 @@ ol {
   border-right: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   transition: background 240ms ease;
+  height: 100%;
 }
 
 .contact-grid a[data-primary="true"] {
@@ -855,7 +883,7 @@ ol {
 
 .contact-grid a:hover,
 .contact-grid a:focus-visible {
-  background: var(--surface);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .contact-grid__number {
@@ -1887,6 +1915,10 @@ ol {
 
   .contact-grid {
     grid-template-columns: 1fr;
+  }
+
+  .contact-grid > .contact-grid__primary {
+    grid-column: auto;
   }
 
   .contact-grid a[data-primary="true"] {

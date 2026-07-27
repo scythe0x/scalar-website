@@ -2,20 +2,32 @@
 
 import { useEffect, useRef } from "react";
 
-const SCENES = [
-  "hero",
-  "work",
-  "about",
-  "capabilities",
-  "experience",
-  "contact",
-  "footer",
-] as const;
-
 const GLYPHS = "·:;+*#%@";
+const BASE_LAYER_BRIGHTNESS = 0.8;
+const CURSOR_ACCENT_CHANCE = 0.42;
+const CURSOR_ACCENT_RADIUS = 116;
+
+type FieldSample = {
+  strength: number;
+  accent: number;
+  motion: number;
+};
+
+type ArtTransform = {
+  centerX: number;
+  centerY: number;
+  scale: number;
+  rotation: number;
+  shear: number;
+  depth: number;
+};
 
 function clamp(value: number, min = 0, max = 1) {
   return Math.min(max, Math.max(min, value));
+}
+
+function lerp(from: number, to: number, progress: number) {
+  return from + (to - from) * progress;
 }
 
 function smoothstep(edge0: number, edge1: number, value: number) {
@@ -52,162 +64,162 @@ function ring(x: number, y: number, radius: number, width: number) {
   return 1 - smoothstep(width * 0.25, width, Math.abs(Math.hypot(x, y) - radius));
 }
 
-function boxFrame(
+function point(x: number, y: number, px: number, py: number, radius: number) {
+  return 1 - smoothstep(radius * 0.3, radius, Math.hypot(x - px, y - py));
+}
+
+function outwardPulse(
   x: number,
   y: number,
-  halfWidth: number,
-  halfHeight: number,
-  thickness: number,
+  angle: number,
+  time: number,
+  offset: number,
 ) {
-  const distance = Math.max(Math.abs(x) - halfWidth, Math.abs(y) - halfHeight);
-  return 1 - smoothstep(thickness * 0.15, thickness, Math.abs(distance));
+  const directionX = Math.cos(angle);
+  const directionY = Math.sin(angle);
+  const along = x * directionX + y * directionY;
+  const across = Math.abs(-x * directionY + y * directionX);
+  const pulsePosition = 0.12 + ((time * 0.12 + offset) % 1) * 0.88;
+  const rail = 1 - smoothstep(0.012, 0.033, across);
+  const head = 1 - smoothstep(0.025, 0.085, Math.abs(along - pulsePosition));
+  const tail =
+    smoothstep(pulsePosition - 0.2, pulsePosition - 0.04, along) *
+    (1 - smoothstep(pulsePosition - 0.04, pulsePosition, along));
+  const bounds =
+    smoothstep(0.05, 0.14, along) * (1 - smoothstep(0.94, 1.08, along));
+
+  return {
+    rail: rail * bounds,
+    pulse: rail * Math.max(head, tail * 0.58) * bounds,
+  };
 }
 
-function heroField(x: number, y: number) {
-  const px = x - 0.43;
+function heroField(
+  x: number,
+  y: number,
+  time: number,
+  reducedMotion: boolean,
+): FieldSample {
+  const animatedTime = reducedMotion ? 0 : time * 0.001;
   const py = y + 0.02;
-  const radius = Math.hypot(px, py);
-  const angle = Math.atan2(py, px);
+  const radius = Math.hypot(x, py);
+  const angle = Math.atan2(py, x);
+  const bladeRotation = animatedTime * 0.16;
   const blades =
-    (0.5 + 0.5 * Math.cos(angle * 7 - radius * 15)) *
+    (0.5 +
+      0.5 * Math.cos(angle * 7 - radius * 15 - bladeRotation)) *
     (1 - smoothstep(0.18, 0.88, radius));
-  const core = ring(px, py, 0.17, 0.045) + ring(px, py, 0.31, 0.04);
-  const cut = smoothstep(0.02, 0.12, Math.abs(Math.sin(angle * 3.5)));
+  const cut = smoothstep(
+    0.02,
+    0.12,
+    Math.abs(Math.sin((angle - bladeRotation * 0.22) * 3.5)),
+  );
+
+  const innerRing = ring(x, py, 0.17, 0.045);
+  const outerRing = ring(x, py, 0.31, 0.04);
+  const innerSegments =
+    0.18 +
+    Math.pow(
+      0.5 + 0.5 * Math.cos(angle * 8 - animatedTime * 0.92),
+      2.4,
+    ) *
+      0.82;
+  const outerSegments =
+    0.16 +
+    Math.pow(
+      0.5 + 0.5 * Math.cos(angle * 11 + animatedTime * 0.64),
+      2.2,
+    ) *
+      0.84;
+  const rotatingRings = Math.max(
+    innerRing * innerSegments,
+    outerRing * outerSegments,
+  );
+  const fullRings = Math.max(innerRing * 0.72, outerRing * 0.68);
+
+  const innerNodeAngle = animatedTime * 0.92;
+  const outerNodeAngle = -animatedTime * 0.64 + 1.35;
+  const orbitalNodes = Math.max(
+    point(
+      x,
+      py,
+      Math.cos(innerNodeAngle) * 0.17,
+      Math.sin(innerNodeAngle) * 0.17,
+      0.045,
+    ),
+    point(
+      x,
+      py,
+      Math.cos(outerNodeAngle) * 0.31,
+      Math.sin(outerNodeAngle) * 0.31,
+      0.04,
+    ),
+  );
+
   const horizon = line(x, y, -1.15, 0.46, 0.72, -0.34, 0.026);
   const counter = line(x, y, -0.82, -0.48, 0.94, 0.44, 0.015);
-  return clamp(Math.max(blades * cut * 0.86, core, horizon * 0.74, counter * 0.38));
-}
+  const rayAngles = [-0.43, 0.43, 2.7, 3.57, 1.18, -1.96];
+  let rails = 0;
+  let pulses = 0;
 
-function workField(x: number, y: number) {
-  const leftX = x + 0.42;
-  const leftY = y + 0.03;
-  const radius = Math.hypot(leftX, leftY);
-  const angle = Math.atan2(leftY, leftX);
-  const vortexMask = 1 - smoothstep(0.12, 0.78, radius);
-  const vortex =
-    Math.pow(0.5 + 0.5 * Math.cos(angle * 6 + radius * 30), 2.2) *
-    vortexMask;
-  const wake =
-    line(x, y, -1.08, 0.48, -0.28, -0.08, 0.025) +
-    line(x, y, -1.05, 0.32, -0.25, -0.05, 0.016) +
-    line(x, y, -1.0, 0.16, -0.23, -0.02, 0.012);
-
-  const rightX = x - 0.5;
-  const rightY = y + 0.02;
-  const foldMask =
-    (1 - smoothstep(0.35, 0.72, Math.hypot(rightX * 0.8, rightY))) *
-    smoothstep(-0.1, 0.16, rightX + 0.55);
-  const folds =
-    Math.pow(
-      0.5 +
-        0.5 *
-          Math.cos(
-            rightX * 23 +
-              Math.sin(rightY * 8) * 4 +
-              Math.sign(rightY) * rightY * rightY * 17,
-          ),
-      3,
-    ) * foldMask;
-  const spine =
-    line(x, y, 0.08, -0.58, 0.94, 0.44, 0.022) +
-    line(x, y, 0.18, -0.5, 0.9, 0.56, 0.012);
-
-  return clamp(Math.max(vortex, wake * 0.76, folds * 0.9, spine * 0.7));
-}
-
-function aboutField(x: number, y: number) {
-  const ridge =
-    line(x, y, -1.08, 0.43, -0.5, -0.38, 0.032) +
-    line(x, y, -0.5, -0.38, -0.03, 0.16, 0.032) +
-    line(x, y, -0.03, 0.16, 0.34, -0.4, 0.032) +
-    line(x, y, 0.34, -0.4, 1.06, 0.35, 0.032);
-  const echoes =
-    line(x, y + 0.11, -1.08, 0.43, -0.5, -0.38, 0.017) +
-    line(x, y + 0.11, -0.5, -0.38, -0.03, 0.16, 0.017) +
-    line(x, y + 0.11, -0.03, 0.16, 0.34, -0.4, 0.017) +
-    line(x, y + 0.11, 0.34, -0.4, 1.06, 0.35, 0.017);
-  const nodes =
-    ring(x + 0.5, y + 0.38, 0.08, 0.025) +
-    ring(x - 0.34, y + 0.4, 0.08, 0.025);
-  return clamp(Math.max(ridge, echoes * 0.62, nodes));
-}
-
-function capabilitiesField(x: number, y: number) {
-  let modules = 0;
-  for (let row = -1; row <= 1; row += 1) {
-    for (let column = -1; column <= 1; column += 1) {
-      if (Math.abs(row) + Math.abs(column) === 2) continue;
-      modules = Math.max(
-        modules,
-        boxFrame(x - column * 0.36, y - row * 0.27, 0.2, 0.14, 0.025),
-      );
-    }
-  }
-  const diagonal =
-    line(x, y, -0.92, 0.6, 0.92, -0.6, 0.022) +
-    line(x, y, -0.92, -0.6, 0.92, 0.6, 0.014);
-  const core = ring(x, y, 0.12, 0.035);
-  return clamp(Math.max(modules * 0.84, diagonal * 0.7, core));
-}
-
-function experienceField(x: number, y: number) {
-  let tower = 0;
-  for (let index = 0; index < 8; index += 1) {
-    const width = 0.14 + index * 0.065;
-    tower = Math.max(
-      tower,
-      line(
-        x,
-        y,
-        -width,
-        0.62 - index * 0.13,
-        width,
-        0.62 - index * 0.13,
-        0.027,
-      ),
+  for (let index = 0; index < rayAngles.length; index += 1) {
+    const ray = outwardPulse(
+      x,
+      py,
+      rayAngles[index],
+      animatedTime,
+      index / rayAngles.length,
     );
+    rails = Math.max(rails, ray.rail);
+    pulses = Math.max(pulses, ray.pulse);
   }
-  const rails =
-    line(x, y, -0.62, 0.48, -0.08, -0.58, 0.025) +
-    line(x, y, 0.62, 0.48, 0.08, -0.58, 0.025);
-  const signal =
-    ring(x, y + 0.62, 0.13, 0.027) + ring(x, y + 0.62, 0.24, 0.02);
-  return clamp(Math.max(tower, rails * 0.8, signal * 0.8));
+
+  const coreSpark = point(x, py, 0, 0, 0.065);
+  const accent = Math.max(innerRing, outerRing, coreSpark);
+  const motion = Math.max(rotatingRings, orbitalNodes, pulses);
+
+  return {
+    strength: clamp(
+      Math.max(
+        blades * cut * 0.84,
+        fullRings,
+        horizon * 0.7,
+        counter * 0.38,
+        rails * 0.24,
+        coreSpark * 0.82,
+      ),
+    ),
+    accent: clamp(accent),
+    motion: clamp(motion),
+  };
 }
 
-function contactField(x: number, y: number) {
-  const px = x + 0.05;
-  const py = y;
-  const radius = Math.hypot(px, py);
-  const angle = Math.atan2(py, px);
-  const aperture =
-    (0.45 + 0.55 * Math.cos(angle * 12)) *
-    (1 - smoothstep(0.1, 0.8, radius));
-  const transmissions =
-    ring(px, py, 0.26, 0.025) +
-    ring(px, py, 0.46, 0.022) +
-    ring(px, py, 0.68, 0.018);
-  const beam = line(x, y, -1.1, 0.02, 1.1, -0.02, 0.02);
-  return clamp(Math.max(aperture * 0.85, transmissions * 0.75, beam * 0.6));
-}
+function getArtTransform(
+  progress: number,
+  reducedMotion: boolean,
+): ArtTransform {
+  const intro = smoothstep(0, 0.17, progress);
+  const travel = smoothstep(0.12, 1, progress);
+  const scrollWave = reducedMotion ? 0 : Math.sin(travel * Math.PI * 2.4);
+  const scrollWaveSlow = reducedMotion
+    ? 0
+    : Math.sin(travel * Math.PI * 1.35);
 
-function footerField(x: number, y: number) {
-  const left = ring(x + 0.3, y, 0.3, 0.045);
-  const right = ring(x - 0.3, y, 0.3, 0.045);
-  const slashA = line(x, y, -0.92, 0.48, 0.92, -0.48, 0.018);
-  const slashB = line(x, y, -0.92, -0.48, 0.92, 0.48, 0.018);
-  return clamp(Math.max(left, right, slashA * 0.5, slashB * 0.5));
+  return {
+    centerX: lerp(0.43, 0, intro) + scrollWaveSlow * 0.075 * intro,
+    centerY:
+      lerp(0.02, -0.025, intro) +
+      Math.sin(travel * Math.PI * 2) * 0.055 * intro,
+    scale:
+      lerp(1, reducedMotion ? 1.14 : 1.4, intro) +
+      scrollWave * 0.09 * intro,
+    rotation: reducedMotion
+      ? 0
+      : -0.075 * intro + travel * 0.24 + scrollWaveSlow * 0.035,
+    shear: reducedMotion ? 0 : scrollWave * 0.1 * intro,
+    depth: reducedMotion ? 0 : scrollWaveSlow * 0.16 * intro,
+  };
 }
-
-const FIELD_FUNCTIONS = [
-  heroField,
-  workField,
-  aboutField,
-  capabilitiesField,
-  experienceField,
-  contactField,
-  footerField,
-];
 
 export function ScrollSceneBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -223,11 +235,22 @@ export function ScrollSceneBackground() {
     ).matches;
     let width = 0;
     let height = 0;
-    let targetScene = 0;
-    let renderedScene = 0;
-    let scrollOffset = 0;
+    let scrollProgress = 0;
     let frame = 0;
     let lastPaint = 0;
+    let pointerX = -CURSOR_ACCENT_RADIUS;
+    let pointerY = -CURSOR_ACCENT_RADIUS;
+    let pointerVisible = false;
+
+    const updateScrollState = () => {
+      const scrollRange = Math.max(
+        document.documentElement.scrollHeight - window.innerHeight,
+        1,
+      );
+      scrollProgress = clamp(window.scrollY / scrollRange);
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(draw);
+    };
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
@@ -237,49 +260,18 @@ export function ScrollSceneBackground() {
       canvas.width = Math.max(1, Math.floor(width * ratio));
       canvas.height = Math.max(1, Math.floor(height * ratio));
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
-      updateScene();
+      updateScrollState();
     };
 
-    const updateScene = () => {
-      const elements = Array.from(
-        document.querySelectorAll<HTMLElement>("[data-background-scene]"),
-      );
-      if (!elements.length) return;
-
-      const viewportCenter = window.scrollY + window.innerHeight * 0.52;
-      const centers = elements.map(
-        (element) =>
-          element.getBoundingClientRect().top +
-          window.scrollY +
-          element.offsetHeight * 0.5,
-      );
-
-      let next = 0;
-      for (let index = 0; index < centers.length - 1; index += 1) {
-        if (viewportCenter >= centers[index]) {
-          const span = Math.max(centers[index + 1] - centers[index], 1);
-          next = index + clamp((viewportCenter - centers[index]) / span);
-        }
-      }
-      if (viewportCenter >= centers[centers.length - 1]) {
-        next = centers.length - 1;
-      }
-
-      targetScene = clamp(next, 0, SCENES.length - 1);
-      scrollOffset =
-        ((window.scrollY / Math.max(document.body.scrollHeight, 1)) % 1) * 0.12;
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(draw);
-    };
-
-    const drawScene = (sceneIndex: number, alpha: number, time: number) => {
-      if (alpha <= 0.005) return;
+    const drawArt = (time: number) => {
       const compact = width < 700;
       const cell = compact ? 12 : Math.max(9, Math.min(12, width / 145));
       const columns = Math.ceil(width / cell);
       const rows = Math.ceil(height / cell);
       const aspect = width / Math.max(height, 1);
-      const field = FIELD_FUNCTIONS[sceneIndex];
+      const transform = getArtTransform(scrollProgress, reducedMotion);
+      const cos = Math.cos(transform.rotation);
+      const sin = Math.sin(transform.rotation);
 
       context.textAlign = "center";
       context.textBaseline = "middle";
@@ -289,39 +281,109 @@ export function ScrollSceneBackground() {
         for (let column = 0; column < columns; column += 1) {
           const baseX = ((column + 0.5) / columns) * 2 - 1;
           const baseY =
-            (((row + 0.5) / rows) * 2 - 1 + scrollOffset) / Math.max(aspect, 1);
-          const phase = reducedMotion ? 0 : time * 0.00016;
-          const rotation = Math.sin(phase + sceneIndex * 0.8) * 0.018;
-          const breathing = 1 + Math.sin(phase * 1.7 + sceneIndex) * 0.012;
-          const cos = Math.cos(rotation);
-          const sin = Math.sin(rotation);
+            (((row + 0.5) / rows) * 2 - 1) / Math.max(aspect, 1);
+          const translatedX = baseX - transform.centerX;
+          const translatedY = baseY - transform.centerY;
+          const rotatedX = translatedX * cos + translatedY * sin;
+          const rotatedY = -translatedX * sin + translatedY * cos;
+          const perspective = Math.max(
+            0.72,
+            1 + rotatedY * transform.depth,
+          );
           const nx =
-            (baseX * cos - baseY * sin) * breathing +
-            Math.sin(baseY * 6 + phase * 2.2) * 0.008;
-          const ny =
-            (baseX * sin + baseY * cos) * breathing +
-            Math.cos(baseX * 5 - phase * 1.6) * 0.007;
-          const strength = field(nx, ny);
-          const noise = Math.abs(hash(column, row, sceneIndex));
+            (rotatedX / perspective - transform.shear * rotatedY) /
+            transform.scale;
+          const ny = rotatedY / transform.scale;
+          const sample = heroField(
+            nx,
+            ny,
+            time,
+            reducedMotion,
+          );
+          const motionPhase = reducedMotion ? 0 : time * 0.00034;
+          const motionFrame = Math.floor(motionPhase);
+          const motionMix = smoothstep(
+            0,
+            1,
+            motionPhase - motionFrame,
+          );
+          const fineNoise = lerp(
+            Math.abs(hash(column + 13, row - 7, motionFrame + 41)),
+            Math.abs(hash(column + 13, row - 7, motionFrame + 42)),
+            motionMix,
+          );
+          const coarseNoise = lerp(
+            Math.abs(
+              hash(
+                Math.floor(column / 3),
+                Math.floor(row / 3),
+                motionFrame + 67,
+              ),
+            ),
+            Math.abs(
+              hash(
+                Math.floor(column / 3),
+                Math.floor(row / 3),
+                motionFrame + 68,
+              ),
+            ),
+            motionMix,
+          );
+          const motionNoise = fineNoise * 0.62 + coarseNoise * 0.38;
+          const texturedMotion =
+            motionNoise > 0.28
+              ? sample.motion * (0.34 + motionNoise * 0.82)
+              : 0;
+          const strength = Math.max(sample.strength, texturedMotion);
+          const accent = Math.max(sample.accent, texturedMotion);
+          const noise = Math.abs(hash(column, row, 0));
           const threshold = 0.13 + noise * 0.19;
           if (strength < threshold) continue;
 
           const normalized = clamp((strength - threshold) / (1 - threshold));
+          const semanticAccent =
+            accent >= threshold && accent >= strength * 0.72;
           const glyphIndex = Math.min(
             GLYPHS.length - 1,
             Math.floor(normalized * GLYPHS.length),
           );
           const highlight =
             normalized > 0.7 &&
-            Math.abs(hash(column + 7, row - 3, sceneIndex + 9)) > 0.86;
-          context.fillStyle = highlight
-            ? `rgba(245, 247, 250, ${alpha * (0.38 + normalized * 0.48)})`
-            : `rgba(218, 223, 229, ${alpha * (0.035 + normalized * 0.5)})`;
-          context.fillText(
-            GLYPHS[glyphIndex],
-            column * cell + cell * 0.5,
-            row * cell + cell * 0.5,
-          );
+            Math.abs(hash(column + 7, row - 3, 9)) > 0.86;
+          const glyphX = column * cell + cell * 0.5;
+          const glyphY = row * cell + cell * 0.5;
+          const cursorDx = glyphX - pointerX;
+          const cursorDy = glyphY - pointerY;
+          const cursorAngle = Math.atan2(cursorDy, cursorDx);
+          const cursorDistance = Math.hypot(cursorDx, cursorDy);
+          const burstShape =
+            0.76 +
+            Math.cos(cursorAngle * 10 + 0.65) * 0.18 +
+            Math.cos(cursorAngle * 3 - 0.8) * 0.09 +
+            Math.sin(cursorAngle * 7 + 0.35) * 0.06;
+          const cursorRadius =
+            CURSOR_ACCENT_RADIUS *
+            (burstShape + hash(column + 19, row - 11, 5) * 0.11);
+          const cursorAccent =
+            pointerVisible &&
+            semanticAccent &&
+            cursorDistance < cursorRadius &&
+            Math.abs(hash(column + 37, row + 23, 17)) <
+              CURSOR_ACCENT_CHANCE;
+
+          context.fillStyle = cursorAccent
+            ? "rgba(92, 126, 255, 0.96)"
+            : highlight
+              ? `rgba(245, 247, 250, ${
+                  (0.38 + normalized * 0.48) *
+                  (semanticAccent ? 1 : BASE_LAYER_BRIGHTNESS)
+                })`
+              : semanticAccent
+                ? `rgba(224, 229, 235, ${0.045 + normalized * 0.51})`
+                : `rgba(218, 223, 229, ${
+                    (0.035 + normalized * 0.5) * BASE_LAYER_BRIGHTNESS
+                  })`;
+          context.fillText(GLYPHS[glyphIndex], glyphX, glyphY);
         }
       }
     };
@@ -332,30 +394,48 @@ export function ScrollSceneBackground() {
         return;
       }
       lastPaint = time;
-      renderedScene = reducedMotion
-        ? targetScene
-        : renderedScene + (targetScene - renderedScene) * 0.12;
       context.clearRect(0, 0, width, height);
-      const lower = Math.floor(renderedScene);
-      const upper = Math.min(SCENES.length - 1, lower + 1);
-      const mix = renderedScene - lower;
-
-      drawScene(lower, 1 - smoothstep(0, 1, mix), time);
-      if (upper !== lower) drawScene(upper, smoothstep(0, 1, mix), time);
+      drawArt(time);
 
       if (!reducedMotion) {
         frame = requestAnimationFrame(draw);
       }
     };
 
+    const updatePointer = (event: PointerEvent) => {
+      if (event.pointerType === "touch") return;
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      pointerVisible = true;
+
+      if (reducedMotion) {
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(draw);
+      }
+    };
+
+    const hidePointer = (event: MouseEvent) => {
+      if (event.relatedTarget) return;
+      pointerVisible = false;
+
+      if (reducedMotion) {
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(draw);
+      }
+    };
+
     resize();
     window.addEventListener("resize", resize);
-    window.addEventListener("scroll", updateScene, { passive: true });
+    window.addEventListener("scroll", updateScrollState, { passive: true });
+    window.addEventListener("pointermove", updatePointer, { passive: true });
+    document.addEventListener("mouseout", hidePointer);
 
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener("resize", resize);
-      window.removeEventListener("scroll", updateScene);
+      window.removeEventListener("scroll", updateScrollState);
+      window.removeEventListener("pointermove", updatePointer);
+      document.removeEventListener("mouseout", hidePointer);
     };
   }, []);
 

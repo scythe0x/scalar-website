@@ -30,26 +30,44 @@ export function WorkSection({ locale, dictionary }: WorkSectionProps) {
       </Reveal>
 
       <div className="work-group">
-        <span className="work-group__label">{dictionary.work.primary}</span>
-        {primary.map((project) => (
-          <ProjectRow
+        <Reveal direction="left" distance={18}>
+          <span className="work-group__label">{dictionary.work.primary}</span>
+        </Reveal>
+        {primary.map((project, index) => (
+          <Reveal
             key={project.slug}
-            project={project}
-            locale={locale}
-            dictionary={dictionary}
-          />
+            delay={index * 0.06}
+            direction="left"
+            distance={34}
+            amount={0.12}
+          >
+            <ProjectRow
+              project={project}
+              locale={locale}
+              dictionary={dictionary}
+            />
+          </Reveal>
         ))}
       </div>
 
       <div className="work-group work-group--supporting">
-        <span className="work-group__label">{dictionary.work.supporting}</span>
-        {supporting.map((project) => (
-          <ProjectRow
+        <Reveal direction="left" distance={18}>
+          <span className="work-group__label">{dictionary.work.supporting}</span>
+        </Reveal>
+        {supporting.map((project, index) => (
+          <Reveal
             key={project.slug}
-            project={project}
-            locale={locale}
-            dictionary={dictionary}
-          />
+            delay={index * 0.05}
+            direction="left"
+            distance={28}
+            amount={0.12}
+          >
+            <ProjectRow
+              project={project}
+              locale={locale}
+              dictionary={dictionary}
+            />
+          </Reveal>
         ))}
       </div>
     </section>
