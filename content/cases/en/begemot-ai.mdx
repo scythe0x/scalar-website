@@ -1,0 +1,53 @@
+## Product context
+
+Begemot AI turns a topic into a structured educational document through a multi-stage generation flow. A user previews the result, purchases the full work, and can add illustrations or a presentation before export.
+
+The difficult frontend problem was not the initial generation screen. It was everything that happened after generation: reviewing a long document, understanding its structure, editing it safely, and connecting those actions to the purchase funnel.
+
+<MetricGrid>
+  <Metric value="1M+">users at product scale</Metric>
+  <Metric value="Primary FE">for a significant part of the project</Metric>
+  <Metric value="End-to-end">redesign delivery from Figma to production</Metric>
+</MetricGrid>
+
+## A generated document still needs a real editor
+
+Generated text is not a finished artifact. Users need to navigate sections, correct individual blocks, keep the document structurally valid, and understand what will appear in the exported version.
+
+I built a full editing layer around a customized Editor.js implementation. The editor had to work with generated content rather than a blank document, handle uncommon states, and coexist with legacy product flows.
+
+<CaseVisual label="Editing flow" tone="blue">
+{`GENERATE → PREVIEW → EDIT
+                ↓
+        STRUCTURE / EXPORT`}
+</CaseVisual>
+
+<Callout label="Product principle">
+The editor was not an isolated feature. It connected generation, perceived quality, purchase confidence, and final export.
+</Callout>
+
+## Delivering the redesign
+
+I implemented a complete interface redesign from Figma and brought it to production. This involved more than rebuilding visual components: new screens had to preserve existing business behavior while the codebase still contained older implementation decisions.
+
+The work included:
+
+- translating designs into reusable frontend patterns;
+- aligning new flows with existing product logic;
+- fixing critical issues across new and legacy code;
+- handling rare states that appeared in long-running generation flows;
+- keeping releases stable while the interface changed.
+
+## Making the funnel observable
+
+Product discussions become more useful when the team can see what users actually do. I implemented client-side analytics and worked with Metabase funnels to inspect the path from generation and preview to purchase and additional options.
+
+That changed the frontend role from simply delivering screens to helping the team reason about the product.
+
+## Working at product scale
+
+For a significant period I was the only frontend engineer on Begemot AI. A second frontend developer joined later. My responsibility was therefore not limited to one feature area: I had to keep new work, legacy stability, product analytics, and delivery moving together.
+
+## Result
+
+Begemot AI received a production redesign, a real editing experience for generated documents, stronger frontend stability, and an observable product funnel—all while serving a product with more than one million users.
