@@ -3,7 +3,6 @@ import { ArrowDown, ArrowUpRight } from "lucide-react";
 import type { Dictionary } from "@/content/dictionaries";
 import type { Locale } from "@/lib/i18n";
 import { siteConfig } from "@/config/site-config";
-import { AsciiField } from "@/components/motion/ascii-field";
 import { Button } from "@/components/ui/button";
 
 type HeroSectionProps = {
@@ -13,29 +12,14 @@ type HeroSectionProps = {
 
 export function HeroSection({ locale, dictionary }: HeroSectionProps) {
   return (
-    <section className="hero" aria-labelledby="hero-title">
-      <AsciiField />
-      <div className="grain" aria-hidden="true" />
-      <div className="hero__coordinates" aria-hidden="true">
-        <span>SC/01</span>
-        <span>61.25°N / {dictionary.hero.systemStatus}</span>
-        <span>∞</span>
-      </div>
-
+    <section
+      className="hero"
+      aria-labelledby="hero-title"
+      data-background-scene="hero"
+    >
       <div className="hero__content">
-        <div className="hero__eyebrow">
-          <span className="availability">
-            <span className="availability__signal" aria-hidden="true" />
-            {dictionary.availability}
-          </span>
-          <span>{dictionary.hero.eyebrow}</span>
-        </div>
-
         <div className="hero__title-wrap">
           <h1 id="hero-title">{dictionary.hero.title}</h1>
-          <span className="hero__scalar-mark" aria-hidden="true">
-            [ 01→∞ ]
-          </span>
         </div>
 
         <div className="hero__information">
@@ -45,7 +29,6 @@ export function HeroSection({ locale, dictionary }: HeroSectionProps) {
           </div>
           <div className="hero__pitch">
             <p className="hero__statement">{dictionary.hero.statement}</p>
-            <p>{dictionary.hero.description}</p>
           </div>
         </div>
 
@@ -67,11 +50,6 @@ export function HeroSection({ locale, dictionary }: HeroSectionProps) {
             </Link>
           </Button>
         </div>
-      </div>
-
-      <div className="hero__scroll" aria-hidden="true">
-        <span>{dictionary.hero.scroll}</span>
-        <span className="hero__scroll-line" />
       </div>
     </section>
   );

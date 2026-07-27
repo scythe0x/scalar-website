@@ -10,7 +10,11 @@ export function CapabilitiesSection({
   dictionary,
 }: CapabilitiesSectionProps) {
   return (
-    <section id="capabilities" className="section capabilities-section">
+    <section
+      id="capabilities"
+      className="section capabilities-section"
+      data-background-scene="capabilities"
+    >
       <Reveal>
         <SectionHeading
           number={dictionary.capabilities.number}
@@ -26,9 +30,6 @@ export function CapabilitiesSection({
               <span>{item.number}</span>
               <h3>{item.title}</h3>
               <p>{item.text}</p>
-              <span className="capability__signal" aria-hidden="true">
-                +++
-              </span>
             </article>
           </Reveal>
         ))}

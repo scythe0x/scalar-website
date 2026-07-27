@@ -8,7 +8,10 @@ type ExperienceSectionProps = {
 
 export function ExperienceSection({ dictionary }: ExperienceSectionProps) {
   return (
-    <section className="section experience-section">
+    <section
+      className="section experience-section"
+      data-background-scene="experience"
+    >
       <Reveal>
         <SectionHeading
           number={dictionary.experience.number}
@@ -25,6 +28,7 @@ export function ExperienceSection({ dictionary }: ExperienceSectionProps) {
           <span>{dictionary.experience.period}</span>
         </div>
         <p className="experience-card__description">
+          <strong>{dictionary.experience.descriptionLead}</strong>
           {dictionary.experience.description}
         </p>
         <ul>
@@ -35,9 +39,15 @@ export function ExperienceSection({ dictionary }: ExperienceSectionProps) {
             </li>
           ))}
         </ul>
-        <div className="experience-card__education">
+      </div>
+      <div className="education-card">
+        <div>
           <span>{dictionary.experience.educationLabel}</span>
-          <p>{dictionary.experience.education}</p>
+          <strong>{dictionary.experience.educationDegree}</strong>
+        </div>
+        <div>
+          <p>{dictionary.experience.educationInstitution}</p>
+          <span>{dictionary.experience.educationPeriod}</span>
         </div>
       </div>
     </section>

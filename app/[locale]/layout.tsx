@@ -5,6 +5,8 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { FilmGrain } from "@/components/background/film-grain";
+import { ScrollSceneBackground } from "@/components/background/scroll-scene-background";
 import { getDictionary } from "@/content/dictionaries";
 import { isLocale, locales, type Locale } from "@/lib/i18n";
 import { getRequestOrigin } from "@/lib/request-url";
@@ -97,13 +99,14 @@ export default async function LocaleLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <ScrollSceneBackground />
+        <FilmGrain />
         <a className="skip-link" href="#main-content">
           {dictionary.navigation.skip}
         </a>
         <SiteHeader
           locale={locale}
           navigation={dictionary.navigation}
-          availability={dictionary.availability}
         />
         {children}
         <SiteFooter locale={locale} dictionary={dictionary} />

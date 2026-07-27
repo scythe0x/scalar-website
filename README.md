@@ -12,7 +12,6 @@ Bilingual portfolio for Sergey Shabalin / SCALAR. The site is built around a noi
 - Motion for restrained interface animation
 - Zod for case metadata validation
 - Vercel Analytics and Speed Insights
-- vinext output for Sites-compatible deployment
 
 ## Development
 
@@ -136,7 +135,7 @@ When changing content:
 ## Accessibility and performance
 
 - Server components are used by default.
-- Client components are limited to the menu, language switcher, copy interaction, reveal motion, and ASCII canvas.
+- Client components are limited to the menu, language switcher, reveal motion, and ASCII canvas.
 - The canvas reduces density on mobile and stops when the tab is hidden.
 - Reduced-motion preferences disable movement.
 - All essential project information remains available without hover.
@@ -144,6 +143,6 @@ When changing content:
 
 ## Deployment
 
-The project builds with `npm run build` and emits a Sites-compatible worker bundle. It is also ready for a standard Vercel Next.js deployment.
+The project uses the standard Next.js build and can be connected to Vercel without a custom adapter.
 
 Vercel Analytics begins reporting automatically after a Vercel deployment. Case routes provide individual page-view separation without a custom backend.

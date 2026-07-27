@@ -10,13 +10,11 @@ import { LanguageSwitcher } from "./language-switcher";
 type SiteHeaderProps = {
   locale: Locale;
   navigation: Dictionary["navigation"];
-  availability: string;
 };
 
 export function SiteHeader({
   locale,
   navigation,
-  availability,
 }: SiteHeaderProps) {
   const [open, setOpen] = useState(false);
   const home = `/${locale}`;
@@ -35,14 +33,8 @@ export function SiteHeader({
           className="wordmark"
           aria-label={navigation.homeLabel}
         >
-          <span aria-hidden="true">S/</span>
           <span>SCALAR</span>
         </Link>
-
-        <div className="availability site-header__availability">
-          <span className="availability__signal" aria-hidden="true" />
-          <span>{availability}</span>
-        </div>
 
         <nav
           className="site-header__nav"
@@ -85,12 +77,6 @@ export function SiteHeader({
             {link.label}
           </Link>
         ))}
-        <div className="mobile-navigation__footer">
-          <div className="availability">
-            <span className="availability__signal" aria-hidden="true" />
-            <span>{availability}</span>
-          </div>
-        </div>
       </nav>
     </header>
   );

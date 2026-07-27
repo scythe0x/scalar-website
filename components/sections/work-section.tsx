@@ -15,7 +15,11 @@ export function WorkSection({ locale, dictionary }: WorkSectionProps) {
   const supporting = caseStudies.filter((project) => !project.featured);
 
   return (
-    <section id="work" className="section work-section">
+    <section
+      id="work"
+      className="section work-section"
+      data-background-scene="work"
+    >
       <Reveal>
         <SectionHeading
           number={dictionary.work.number}

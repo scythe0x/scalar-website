@@ -11,12 +11,7 @@ type SiteFooterProps = {
 
 export function SiteFooter({ locale, dictionary }: SiteFooterProps) {
   return (
-    <footer className="site-footer">
-      <div className="site-footer__field" aria-hidden="true">
-        <span>+ + + +</span>
-        <span>{dictionary.footer.systemField}</span>
-        <span>[ 01 → ∞ ]</span>
-      </div>
+    <footer className="site-footer" data-background-scene="footer">
       <div className="site-footer__statement">
         <span className="section-label">{dictionary.footer.endLabel}</span>
         <p>{dictionary.footer.statement}</p>
@@ -24,21 +19,26 @@ export function SiteFooter({ locale, dictionary }: SiteFooterProps) {
       <div className="site-footer__grid">
         <div>
           <Link href={`/${locale}`} className="wordmark wordmark--footer">
-            S/SCALAR
+            SCALAR
           </Link>
           <p>{dictionary.footer.credit}</p>
         </div>
         <div>
           <span className="footer-label">{dictionary.navigation.contact}</span>
           <Link href={siteConfig.socialLinks.telegram} target="_blank">
-            Telegram
+            Telegram — @zerocommits
           </Link>
           <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
+          <Link href={siteConfig.socialLinks.community} target="_blank">
+            {dictionary.contact.community}
+          </Link>
+          <Link href={siteConfig.socialLinks.github} target="_blank">
+            GitHub
+          </Link>
         </div>
         <div>
           <span className="footer-label">{dictionary.footer.location}</span>
           <LanguageSwitcher locale={locale} />
-          <a href="#top">{dictionary.footer.backToTop} ↑</a>
         </div>
       </div>
       <div className="site-footer__bottom">

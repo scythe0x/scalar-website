@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import type { Dictionary } from "@/content/dictionaries";
 import type { CaseStudy } from "@/content/case-data";
@@ -34,19 +35,27 @@ export function ProjectRow({
           <h3>{project.title}</h3>
         </div>
         <p className="project-row__summary">{localized.summary}</p>
-        <div className="project-row__metric">
-          <strong>{localized.metrics[0]?.value}</strong>
-          <span>{localized.metrics[0]?.label}</span>
+        <div className="project-row__metrics">
+          {localized.metrics.slice(0, 2).map((metric) => (
+            <div className="project-row__metric" key={metric.label}>
+              <strong>{metric.value}</strong>
+              <span>{metric.label}</span>
+            </div>
+          ))}
         </div>
         <div className="project-row__action">
-          <span>{dictionary.work.openCase}</span>
           <ArrowUpRight aria-hidden="true" size={20} strokeWidth={1.4} />
         </div>
-        <div className="project-row__visual" aria-hidden="true">
-          <span className="project-row__visual-index">{number}</span>
-          <span className="project-row__visual-title">{project.title}</span>
-          <div className="project-row__ascii">{localized.visual}</div>
-        </div>
+        {project.previewImage && project.previewAlt ? (
+          <div className="project-row__preview">
+            <Image
+              src={project.previewImage}
+              alt={project.previewAlt[locale]}
+              fill
+              sizes="(max-width: 760px) 90vw, 36vw"
+            />
+          </div>
+        ) : null}
       </Link>
     </article>
   );

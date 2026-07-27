@@ -8,7 +8,11 @@ type AboutSectionProps = {
 
 export function AboutSection({ dictionary }: AboutSectionProps) {
   return (
-    <section id="about" className="section about-section">
+    <section
+      id="about"
+      className="section about-section"
+      data-background-scene="about"
+    >
       <Reveal>
         <SectionHeading
           number={dictionary.about.number}
@@ -18,19 +22,16 @@ export function AboutSection({ dictionary }: AboutSectionProps) {
       </Reveal>
       <div className="about-section__grid">
         <Reveal className="about-section__manifesto">
+          <span>{dictionary.about.scalarLabel}</span>
           <p>{dictionary.about.scalar}</p>
-          <div className="ascii-scale" aria-hidden="true">
-            <span>01</span>
-            <span>02</span>
-            <span>04</span>
-            <span>08</span>
-            <span>16</span>
-          </div>
         </Reveal>
         <div className="about-section__copy">
           {dictionary.about.paragraphs.map((paragraph, index) => (
-            <Reveal key={paragraph} delay={index * 0.06}>
-              <p>{paragraph}</p>
+            <Reveal key={paragraph.lead} delay={index * 0.06}>
+              <p>
+                <strong>{paragraph.lead}</strong>
+                {paragraph.body}
+              </p>
             </Reveal>
           ))}
         </div>
@@ -41,7 +42,7 @@ export function AboutSection({ dictionary }: AboutSectionProps) {
           <span>{dictionary.about.sinceLabel}</span>
         </div>
         <div>
-          <strong>1M+</strong>
+          <strong>{dictionary.about.scaleValue}</strong>
           <span>{dictionary.about.scaleLabel}</span>
         </div>
         <div>

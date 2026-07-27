@@ -14,13 +14,15 @@ const caseSchema = z.object({
   eyebrow: localizedTextSchema,
   summary: localizedTextSchema,
   visual: localizedTextSchema,
+  previewImage: z.string().optional(),
+  previewAlt: localizedTextSchema.optional(),
   role: localizedTextSchema,
   type: localizedTextSchema,
   year: z.string().optional(),
   liveUrl: z.url().optional(),
   metrics: z.array(
     z.object({
-      value: z.string(),
+      value: localizedTextSchema,
       label: localizedTextSchema,
     }),
   ),
@@ -37,7 +39,7 @@ const rawCases = [
     eyebrow: { en: "AI product / EdTech", ru: "AI-продукт / EdTech" },
     summary: {
       en: "Editing, redesign, and analytics for a multi-stage AI document product used by more than one million people.",
-      ru: "Редактор, редизайн и аналитика многоэтапного AI-продукта для документов с аудиторией более миллиона пользователей.",
+      ru: "Редактор, полный редизайн и продуктовая аналитика AI-сервиса с аудиторией более миллиона пользователей.",
     },
     visual: {
       en: "TEXT → BLOCK\n  ↘ EDIT\nDATA → FLOW",
@@ -45,22 +47,22 @@ const rawCases = [
     },
     role: {
       en: "Frontend Engineer / Product contributor",
-      ru: "Frontend Engineer / Участие в продукте",
+      ru: "Frontend Engineer / продуктовая разработка",
     },
     type: {
       en: "AI document platform",
-      ru: "AI-платформа для документов",
+      ru: "AI-сервис для учебных работ",
     },
     year: "2023—2026",
     liveUrl: "https://begemot.ai/",
     metrics: [
       {
-        value: "1M+",
+        value: { en: "1M+", ru: "1 млн+" },
         label: { en: "product users", ru: "пользователей продукта" },
       },
       {
-        value: "Editor.js",
-        label: { en: "custom editing layer", ru: "кастомный редактор" },
+        value: { en: "Full redesign", ru: "Полный редизайн" },
+        label: { en: "from Figma to production", ru: "от Figma до production" },
       },
     ],
     tags: ["React", "TypeScript", "Editor.js", "Metabase"],
@@ -73,7 +75,7 @@ const rawCases = [
     eyebrow: { en: "AI product / Presentations", ru: "AI-продукт / Презентации" },
     summary: {
       en: "Leading frontend, product delivery, and a small cross-functional team for a complex AI presentation generator.",
-      ru: "Frontend, выпуск продукта и лидерство небольшой кросс-функциональной команды сложного AI-генератора презентаций.",
+      ru: "Frontend-разработка, выпуск продукта и руководство небольшой командой, создававшей сложный AI-генератор презентаций.",
     },
     visual: {
       en: "[ ][ ][ ]\n  ↘ BUILD\n[ ][ ][ ]",
@@ -90,11 +92,11 @@ const rawCases = [
     liveUrl: "https://bobr.ai/",
     metrics: [
       {
-        value: "1 week",
+        value: { en: "1 week", ru: "1 неделя" },
         label: { en: "to MVP", ru: "до MVP" },
       },
       {
-        value: "2 months",
+        value: { en: "2 months", ru: "2 месяца" },
         label: { en: "to market release", ru: "до выхода на рынок" },
       },
     ],
@@ -108,11 +110,11 @@ const rawCases = [
     title: "InHelp",
     eyebrow: {
       en: "Operations / Support workspace",
-      ru: "Операции / Рабочее пространство поддержки",
+      ru: "Служба поддержки / Внутренний продукт",
     },
     summary: {
       en: "A role-based workspace that joins chats, tasks, telephony, scheduling, performance, and payouts.",
-      ru: "Ролевое рабочее пространство, объединяющее чаты, задачи, телефонию, расписание, метрики и выплаты.",
+      ru: "Единое рабочее пространство службы поддержки: чаты, задачи, телефония, расписание, показатели и выплаты.",
     },
     visual: {
       en: "CHAT ─ TASK\n  │  SHIFT\nCALL ─ DATA",
@@ -128,10 +130,10 @@ const rawCases = [
     },
     metrics: [
       {
-        value: "One",
+        value: { en: "7", ru: "7" },
         label: {
-          en: "unified operational workspace",
-          ru: "единое рабочее пространство",
+          en: "core workflows in one interface",
+          ru: "рабочих процессов в одном интерфейсе",
         },
       },
     ],
@@ -144,11 +146,11 @@ const rawCases = [
     title: "PEPPER CAT",
     eyebrow: {
       en: "Visual systems / Music",
-      ru: "Визуальные системы / Музыка",
+      ru: "Визуальная система / Музыка",
     },
     summary: {
       en: "A repeatable cover, motion, and export pipeline for a high-frequency music label.",
-      ru: "Повторяемый конвейер обложек, motion-дизайна и экспорта для музыкального лейбла с частыми релизами.",
+      ru: "Система производства обложек, анимации и медиаматериалов для музыкального лейбла с частыми релизами.",
     },
     visual: {
       en: "ART → MOTION\n  ↘ EXPORT",
@@ -164,11 +166,11 @@ const rawCases = [
     },
     metrics: [
       {
-        value: "30+",
+        value: { en: "30+", ru: "30+" },
         label: { en: "releases delivered", ru: "выпущенных релизов" },
       },
       {
-        value: "<2h",
+        value: { en: "<2h", ru: "<2 ч" },
         label: { en: "full package turnaround", ru: "на полный медиапакет" },
       },
     ],
@@ -181,11 +183,11 @@ const rawCases = [
     title: "Burmistrov",
     eyebrow: {
       en: "Rapid delivery / Personal site",
-      ru: "Быстрый выпуск / Личный сайт",
+      ru: "Сайт за один день / Личный бренд",
     },
     summary: {
       en: "A focused personal destination for a business consultant, scoped and shipped in one day.",
-      ru: "Сфокусированный личный сайт бизнес-консультанта, согласованный и выпущенный за один день.",
+      ru: "Личный сайт бизнес-консультанта — от первой договорённости до запуска за один день.",
     },
     visual: {
       en: "BRIEF → LIVE\n  [ 24H ]",
@@ -202,7 +204,7 @@ const rawCases = [
     liveUrl: "https://burmistrov.link/",
     metrics: [
       {
-        value: "1 day",
+        value: { en: "1 day", ru: "1 день" },
         label: { en: "from scope to launch", ru: "от задачи до запуска" },
       },
     ],
@@ -228,7 +230,7 @@ export function localizeCase(project: CaseStudy, locale: Locale) {
     role: project.role[locale],
     type: project.type[locale],
     metrics: project.metrics.map((metric) => ({
-      value: metric.value,
+      value: metric.value[locale],
       label: metric.label[locale],
     })),
   };
