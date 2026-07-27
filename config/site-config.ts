@@ -2,6 +2,9 @@ export const siteConfig = {
   name: "SCALAR",
   person: "Sergey Shabalin",
   email: "whoiscyberial@gmail.com",
+  features: {
+    customCursor: false,
+  },
   socialLinks: {
     telegram: "https://t.me/zerocommits",
     community: "https://t.me/scalarops",

@@ -9,6 +9,7 @@ import { FilmGrain } from "@/components/background/film-grain";
 import { ScrollSceneBackground } from "@/components/background/scroll-scene-background";
 import { CustomCursor } from "@/components/ui/custom-cursor";
 import { ScrollProgress } from "@/components/motion/scroll-progress";
+import { siteConfig } from "@/config/site-config";
 import { getDictionary } from "@/content/dictionaries";
 import { isLocale, locales, type Locale } from "@/lib/i18n";
 import { getRequestOrigin } from "@/lib/request-url";
@@ -103,7 +104,7 @@ export default async function LocaleLayout({
       >
         <ScrollSceneBackground />
         <FilmGrain />
-        <CustomCursor />
+        {siteConfig.features.customCursor ? <CustomCursor /> : null}
         <ScrollProgress />
         <a className="skip-link" href="#main-content">
           {dictionary.navigation.skip}
