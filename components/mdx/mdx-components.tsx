@@ -1,29 +1,6 @@
-import Image from "next/image";
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { cn } from "@/lib/utils";
-
-export function MetricGrid({
-  children,
-}: {
-  children: ReactNode;
-}) {
-  return <div className="mdx-metric-grid">{children}</div>;
-}
-
-export function Metric({
-  value,
-  children,
-}: {
-  value: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className="mdx-metric">
-      <strong>{value}</strong>
-      <span>{children}</span>
-    </div>
-  );
-}
+import { ZoomableImage } from "@/components/mdx/zoomable-image";
 
 export function Callout({
   label,
@@ -44,29 +21,13 @@ export function ProcessSteps({ children }: { children: ReactNode }) {
   return <div className="mdx-process">{children}</div>;
 }
 
-export function CaseVisual({
-  label,
-  children,
-  tone = "neutral",
-}: {
-  label: string;
-  children: ReactNode;
-  tone?: "neutral" | "blue";
-}) {
-  return (
-    <figure className="case-visual" data-tone={tone}>
-      <figcaption>{label}</figcaption>
-      <pre>{children}</pre>
-    </figure>
-  );
-}
-
 export function Figure({
   src,
   alt,
   caption,
   width = 1600,
   height = 1000,
+  size = "wide",
   className,
 }: {
   src: string;
@@ -74,15 +35,17 @@ export function Figure({
   caption?: string;
   width?: number;
   height?: number;
+  size?: "reading" | "wide" | "full";
   className?: string;
 }) {
   return (
-    <figure className={cn("mdx-figure", className)}>
-      <Image
+    <figure className={cn("mdx-figure", className)} data-size={size}>
+      <ZoomableImage
         src={src}
         alt={alt}
         width={width}
         height={height}
+        unoptimized={src.toLowerCase().endsWith(".gif")}
         sizes="(max-width: 768px) 100vw, 80vw"
       />
       {caption ? <figcaption>{caption}</figcaption> : null}
@@ -141,11 +104,8 @@ export const mdxComponents = {
       <table {...props} />
     </div>
   ),
-  MetricGrid,
-  Metric,
   Callout,
   ProcessSteps,
-  CaseVisual,
   Figure,
   MediaSplit,
   Video,

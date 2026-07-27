@@ -1,36 +1,24 @@
 ## The real problem behind AI presentations
 
-Generating text for ten slides is relatively easy. Generating a coherent presentation is not. The system has to understand narrative structure, visual rhythm, the amount of content, appropriate imagery, and the constraints of PowerPoint and PDF output.
+Generating text for ten slides is relatively easy. **Generating a coherent presentation is not.** The system has to understand narrative structure, visual rhythm, the amount of content, appropriate imagery, and the constraints of PowerPoint and PDF output.
 
-BOBR AI was built to solve that larger problem rather than place generated text into a fixed template.
-
-<MetricGrid>
-  <Metric value="1 week">to a working MVP</Metric>
-  <Metric value="2 months">to a full market release</Metric>
-  <Metric value="3 disciplines">frontend, backend, and design coordinated</Metric>
-</MetricGrid>
+**BOBR AI was built as a complete presentation generator**, rather than a system that places generated text into a fixed template.
 
 ## Defining the MVP
 
-As lead developer, I was responsible for frontend delivery and coordinated a backend developer and designer. The first objective was a narrow end-to-end path: a user provides a topic, the product creates a deck, and the result can be reviewed and exported.
+As **lead developer**, I was responsible for frontend delivery and coordinated a backend developer and designer. The first objective was a narrow end-to-end path: a user provides a topic, the product creates a deck, and the result can be reviewed and exported.
 
-The MVP was working within one week. That speed was useful because it exposed the difficult parts early instead of hiding them behind months of speculative architecture.
-
-<CaseVisual label="From prompt to deck" tone="blue">
-{`CONTEXT → STRUCTURE → COPY
-              ↓
-IMAGE SEARCH → LAYOUT → PPTX / PDF`}
-</CaseVisual>
+**The MVP was working within one week.** That speed was useful because it exposed the difficult parts early instead of hiding them behind months of speculative architecture.
 
 ## Frontend as an orchestration layer
 
 The interface had to represent a long-running, multi-step process without making the product feel stuck or unpredictable. It needed clear generation states, recoverable errors, progressive results, and a useful final presentation view.
 
-This made the frontend an orchestration layer between the user, generation pipeline, assets, and export—not a static shell around an API.
+This made the frontend **an orchestration layer between the user, generation pipeline, assets, and export** — not a static shell around an API.
 
 ## Prompt engineering and visual quality
 
-The most time-consuming problem was teaching the generation system to make decisions that felt visually intentional. We iterated on prompts, content structure, layout logic, and image selection, including image discovery through Yandex search.
+**The most time-consuming problem was visual quality.** We iterated on prompts, content structure, layout logic, and image selection, including image discovery through Yandex search.
 
 <Callout label="Speed versus quality">
 A one-week MVP proved the workflow. The following work made the output useful. Fast validation and long quality iteration were both necessary.
@@ -44,4 +32,4 @@ The project required switching between code, product scope, prompt experiments, 
 
 ## Result
 
-BOBR AI moved from concept to MVP in one week and reached a full market release in two months. The product continued to evolve after my involvement; this case describes the system and my contribution during that period.
+**BOBR AI moved from concept to MVP in one week and reached a full market release in two months.** The product continued to evolve after my involvement; this case describes the system and my contribution during that period.

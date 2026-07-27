@@ -17,13 +17,15 @@ export function CaseHeader({
 }: CaseHeaderProps) {
   return (
     <header className="case-header">
-      <Link href={`/${locale}#work`} className="case-header__back">
-        <ArrowLeft aria-hidden="true" size={16} />
-        {dictionary.casePage.back}
-      </Link>
-      <div className="case-header__index">
-        <span>{String(project.order).padStart(2, "0")}</span>
-        <span>{project.eyebrow}</span>
+      <div className="case-header__top">
+        <Link href={`/${locale}#work`} className="case-header__back">
+          <ArrowLeft aria-hidden="true" size={16} />
+          {dictionary.casePage.back}
+        </Link>
+        <div className="case-header__index">
+          <span>{String(project.order).padStart(2, "0")}</span>
+          <span>{project.eyebrow}</span>
+        </div>
       </div>
       <h1>{project.title}</h1>
       <p className="case-header__summary">{project.summary}</p>

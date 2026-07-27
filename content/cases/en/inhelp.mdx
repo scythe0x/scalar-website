@@ -1,45 +1,68 @@
 ## One interface, many operational contexts
 
-Support operators often work across disconnected tools: one for chats, another for tasks, a schedule elsewhere, telephony in a separate window, and performance or payout information in yet another system.
+Support operators often work across **several disconnected tools**: one for chats, another for tasks, a schedule elsewhere, telephony in a separate window, and performance or payout information in yet another system.
 
-InHelp joined those contexts into a role-based workspace.
-
-<MetricGrid>
-  <Metric value="7">core workflows in one interface</Metric>
-  <Metric value="Role-based">visibility and actions</Metric>
-  <Metric value="Live">tasks, calls, chats, and shifts</Metric>
-</MetricGrid>
+**InHelp joined those contexts into one role-based workspace.**
 
 ## Mapping the work before designing screens
 
-The interface had to match a real working day. An operator needed to see what required attention now, understand the status of an application, communicate with a client, and know what came next in the schedule.
+The interface had to match **a real working day**. An operator needed to see what required attention now, understand the status of an application, communicate with a client, and know what came next in the schedule.
 
 The frontend covered:
 
-- customer chats and support requests;
+- **customer chats** and support requests;
 - assigned tasks and processing statuses;
 - internal telephony and consultation booking;
-- shift planning and workload by time slot;
+- **shift planning** and workload by time slot;
 - earnings, accruals, and payout history;
 - performance ratings and feedback;
 - profile and payment details.
 
-<CaseVisual label="Operational model">
-{`CHAT ─── TASK ─── STATUS
-  │        │          │
-CALL ─── SHIFT ─── RESULT
-             ↘
-        METRICS / PAYOUT`}
-</CaseVisual>
+<Figure
+  src="/cases/inhelp/chats.png"
+  alt="InHelp customer chat workspace"
+  caption="The operator sees the conversation queue, customer context, and actions in one workspace."
+  width={3090}
+  height={2160}
+  size="wide"
+/>
 
 ## Designing for roles and states
 
-An internal product becomes difficult when every role sees the same controls. The interface needed to reveal the right information and actions for each operational context without creating separate disconnected applications.
+An internal product becomes difficult when every role sees the same controls. The interface needed to **reveal the right information and actions for each role** without creating separate disconnected applications.
 
-Scheduling introduced another dimension: team direction, time slots, shift availability, and workload had to remain understandable at a glance.
+**Scheduling introduced another dimension:** team direction, time slots, shift availability, and workload had to remain understandable at a glance.
+
+<Figure
+  src="/cases/inhelp/schedule.png"
+  alt="InHelp shift and workstream schedule"
+  caption="Team workload by workstream and time slot."
+  width={3090}
+  height={2160}
+  size="wide"
+/>
 
 ## Product result
 
-InHelp replaced several fragmented tools with a single workspace. Operators could see current work, schedules, quality indicators, and financial results, while managers gained a clearer view of team workload.
+**InHelp replaced several fragmented tools with a single workspace.** Operators could see current work, schedules, quality indicators, and financial results, while managers gained a clearer view of team workload.
+
+<MediaSplit>
+  <Figure
+    src="/cases/inhelp/rating-page.png"
+    alt="InHelp operator rating and performance metrics"
+    caption="Quality indicators and feedback."
+    width={3600}
+    height={2086}
+    size="full"
+  />
+  <Figure
+    src="/cases/inhelp/salary.png"
+    alt="InHelp earnings and payout history"
+    caption="Financial results in the operator account."
+    width={3600}
+    height={2214}
+    size="full"
+  />
+</MediaSplit>
 
 The case demonstrates frontend work where information architecture and operational clarity matter as much as visual polish.
