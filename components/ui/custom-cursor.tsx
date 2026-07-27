@@ -68,16 +68,31 @@ export function CustomCursor() {
       cursor.dataset.pressed = "false";
     };
 
+    const hide = () => {
+      cursor.dataset.visible = "false";
+      cursor.dataset.pressed = "false";
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+        animationFrame = 0;
+      }
+    };
+
     const leave = (event: MouseEvent) => {
-      if (!event.relatedTarget) cursor.dataset.visible = "false";
+      if (!event.relatedTarget) hide();
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState !== "visible") hide();
     };
 
     window.addEventListener("pointermove", move, { passive: true });
     window.addEventListener("pointerover", updateState, { passive: true });
     window.addEventListener("pointerdown", press, { passive: true });
     window.addEventListener("pointerup", release, { passive: true });
+    window.addEventListener("pointercancel", hide, { passive: true });
     document.addEventListener("mouseout", leave);
-    window.addEventListener("blur", release);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("blur", hide);
 
     return () => {
       cancelAnimationFrame(animationFrame);
@@ -86,8 +101,10 @@ export function CustomCursor() {
       window.removeEventListener("pointerover", updateState);
       window.removeEventListener("pointerdown", press);
       window.removeEventListener("pointerup", release);
+      window.removeEventListener("pointercancel", hide);
       document.removeEventListener("mouseout", leave);
-      window.removeEventListener("blur", release);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("blur", hide);
     };
   }, []);
 

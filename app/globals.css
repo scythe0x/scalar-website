@@ -1421,7 +1421,7 @@ ol {
   top: 50%;
   width: 1.4rem;
   height: 1.4rem;
-  translate: -50% -50%;
+  translate: -50% calc(-50% - 0.55rem);
   border: 1px solid rgba(255, 255, 255, 0.9);
   border-radius: 999px;
   background: rgba(3, 4, 5, 0.06);
@@ -1501,14 +1501,7 @@ ol {
 @media (pointer: fine) {
   html.has-custom-cursor,
   html.has-custom-cursor body,
-  html.has-custom-cursor a,
-  html.has-custom-cursor button,
-  html.has-custom-cursor input,
-  html.has-custom-cursor textarea,
-  html.has-custom-cursor select,
-  html.has-custom-cursor summary,
-  html.has-custom-cursor .zoomable-image,
-  html.has-custom-cursor .zoomable-image * {
+  html.has-custom-cursor * {
     cursor: none !important;
   }
 }

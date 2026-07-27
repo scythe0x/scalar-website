@@ -124,7 +124,7 @@ const dictionaries = {
       label: "Contact",
       title: "Have a product that needs stronger technical direction?",
       description:
-        "I'm open to freelance projects, startup work, employment, collaboration, remote work, and relocation.",
+        "I'm open to freelance projects, startup work, employment, collaboration, and remote work.",
       telegram: "Message on Telegram",
       email: "Send an email",
       community: "SCALAR community",
@@ -133,7 +133,7 @@ const dictionaries = {
     footer: {
       statement: "Design. Build. Understand. Scale.",
       credit: "Designed and built by Sergey Shabalin",
-      location: "Russia / Remote / Open to relocation",
+      location: "Russia / Remote",
       endLabel: "06 / END",
       since: "Product engineering since 2017",
     },
@@ -279,7 +279,7 @@ const dictionaries = {
       label: "Контакты",
       title: "Нужен разработчик, который думает о продукте?",
       description:
-        "Открыт к фриланс-проектам, работе со стартапами и предложениям о найме. Рассматриваю удалённую работу и релокацию.",
+        "Открыт к фриланс-проектам, работе со стартапами и предложениям о найме. Работаю удалённо.",
       telegram: "Написать в Telegram",
       email: "Написать на почту",
       community: "Сообщество SCALAR",
@@ -288,7 +288,7 @@ const dictionaries = {
     footer: {
       statement: "Понять. Спроектировать. Создать. Масштабировать.",
       credit: "Дизайн и разработка: Сергей Шабалин",
-      location: "Россия / Удалённо / Готов к релокации",
+      location: "Россия / Удалённо",
       endLabel: "06 / ФИНАЛ",
       since: "Продуктовая разработка с 2017 года",
     },
