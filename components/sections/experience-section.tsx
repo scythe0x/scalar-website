@@ -12,15 +12,13 @@ export function ExperienceSection({ dictionary }: ExperienceSectionProps) {
       className="section experience-section"
       data-background-scene="experience"
     >
-      <Reveal>
+      <Reveal variant="heading" amount={0.3}>
         <SectionHeading
-          number={dictionary.experience.number}
-          label={dictionary.experience.label}
           title={dictionary.experience.title}
         />
       </Reveal>
-      <Reveal direction="left" distance={38}>
-        <div className="experience-card">
+      <Reveal className="experience-card" variant="panel" amount={0.12}>
+        <div>
           <div className="experience-card__heading">
             <div>
               <h3>{dictionary.experience.company}</h3>
@@ -29,22 +27,18 @@ export function ExperienceSection({ dictionary }: ExperienceSectionProps) {
             <span>{dictionary.experience.period}</span>
           </div>
           <p className="experience-card__description">
-            <strong>{dictionary.experience.descriptionLead}</strong>
             {dictionary.experience.description}
           </p>
           <ul>
-            {dictionary.experience.facts.map((fact, index) => (
+            {dictionary.experience.facts.map((fact) => (
               <li key={fact}>
-                <span aria-hidden="true">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
                 {fact}
               </li>
             ))}
           </ul>
         </div>
       </Reveal>
-      <Reveal direction="right" distance={30}>
+      <Reveal variant="row" amount={0.3}>
         <div className="education-card">
           <div>
             <span>{dictionary.experience.educationLabel}</span>

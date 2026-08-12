@@ -15,15 +15,13 @@ export function AboutSection({ dictionary }: AboutSectionProps) {
     >
       <Reveal>
         <SectionHeading
-          number={dictionary.about.number}
-          label={dictionary.about.label}
           title={dictionary.about.title}
         />
       </Reveal>
       <div className="about-section__grid">
         <Reveal className="about-section__manifesto">
-          <span>{dictionary.about.scalarLabel}</span>
-          <p>{dictionary.about.scalar}</p>
+          <span>{dictionary.about.practiceLabel}</span>
+          <p>{dictionary.about.practice}</p>
         </Reveal>
         <div className="about-section__copy">
           {dictionary.about.paragraphs.map((paragraph, index) => (
@@ -39,7 +37,7 @@ export function AboutSection({ dictionary }: AboutSectionProps) {
       <Reveal amount={0.25}>
         <div className="proof-strip" aria-label="Selected professional facts">
           <div>
-            <strong>2017</strong>
+            <strong>{dictionary.about.sinceValue}</strong>
             <span>{dictionary.about.sinceLabel}</span>
           </div>
           <div>

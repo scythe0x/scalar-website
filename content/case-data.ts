@@ -36,35 +36,26 @@ const rawCases = [
     order: 1,
     featured: true,
     title: "Begemot AI",
-    eyebrow: { en: "AI product / EdTech", ru: "AI-продукт / EdTech" },
+    eyebrow: { en: "AI service for education", ru: "ИИ-сервис для образования" },
     summary: {
-      en: "Editing, redesign, and analytics for a multi-stage AI document product used by more than one million people.",
-      ru: "Редактор, полный редизайн и продуктовая аналитика AI-сервиса с аудиторией более миллиона пользователей.",
+      en: "Owned major frontend improvements for an AI product at 4M+ user scale: cut LCP in half, shipped a full redesign, built a document editor, and instrumented the product funnel.",
+      ru: "Отвечал за ключевые улучшения фронтенда ИИ-продукта с аудиторией 4 млн+: вдвое сократил LCP, выпустил полный редизайн, редактор документов и продуктовую аналитику.",
     },
     visual: {
       en: "TEXT → BLOCK\n  ↘ EDIT\nDATA → FLOW",
       ru: "ТЕКСТ → БЛОК\n  ↘ ПРАВКА\nДАННЫЕ → ПУТЬ",
     },
     role: {
-      en: "Frontend Engineer / Product contributor",
-      ru: "Frontend Engineer / продуктовая разработка",
+      en: "Frontend Engineer",
+      ru: "Фронтенд-разработчик",
     },
     type: {
       en: "AI document platform",
-      ru: "AI-сервис для учебных работ",
+      ru: "ИИ-сервис для учебных работ",
     },
-    year: "2023—2026",
+    year: "2024—2026",
     liveUrl: "https://begemot.ai/",
-    metrics: [
-      {
-        value: { en: "1M+", ru: "1 млн+" },
-        label: { en: "product users", ru: "пользователей продукта" },
-      },
-      {
-        value: { en: "Full redesign", ru: "Полный редизайн" },
-        label: { en: "from Figma to production", ru: "от Figma до production" },
-      },
-    ],
+    metrics: [],
     tags: ["React", "TypeScript", "Editor.js", "Metabase"],
   },
   {
@@ -72,35 +63,26 @@ const rawCases = [
     order: 2,
     featured: true,
     title: "BOBR AI",
-    eyebrow: { en: "AI product / Presentations", ru: "AI-продукт / Презентации" },
+    eyebrow: { en: "AI presentation generator", ru: "ИИ-генератор презентаций" },
     summary: {
-      en: "Leading frontend, product delivery, and a small cross-functional team for a complex AI presentation generator.",
-      ru: "Frontend-разработка, выпуск продукта и руководство небольшой командой, создававшей сложный AI-генератор презентаций.",
+      en: "Owned frontend delivery for an AI presentation generator, connecting generation, editing, review, and export into one product flow while coordinating team priorities.",
+      ru: "Отвечал за фронтенд ИИ-генератора презентаций: объединил генерацию, редактирование, проверку и экспорт в цельный сценарий и координировал приоритеты команды.",
     },
     visual: {
       en: "[ ][ ][ ]\n  ↘ BUILD\n[ ][ ][ ]",
       ru: "[ ][ ][ ]\n  ↘ СБОРКА\n[ ][ ][ ]",
     },
     role: {
-      en: "Lead Developer / Product Engineer",
-      ru: "Lead Developer / Product Engineer",
+      en: "Frontend Engineer · Team coordinator",
+      ru: "Фронтенд-разработчик · координатор команды",
     },
     type: {
       en: "AI presentation generator",
-      ru: "AI-генератор презентаций",
+      ru: "ИИ-генератор презентаций",
     },
     liveUrl: "https://bobr.ai/",
-    metrics: [
-      {
-        value: { en: "1 week", ru: "1 неделя" },
-        label: { en: "to MVP", ru: "до MVP" },
-      },
-      {
-        value: { en: "2 months", ru: "2 месяца" },
-        label: { en: "to market release", ru: "до выхода на рынок" },
-      },
-    ],
-    tags: ["React", "AI", "Prompt engineering", "Leadership"],
+    metrics: [],
+    tags: ["React", "TypeScript", "Figma", "Team coordination"],
     evolvedAfterInvolvement: true,
   },
   {
@@ -109,12 +91,12 @@ const rawCases = [
     featured: true,
     title: "InHelp",
     eyebrow: {
-      en: "Operations / Support workspace",
-      ru: "Служба поддержки / Внутренний продукт",
+      en: "Internal support workspace",
+      ru: "Рабочее пространство поддержки",
     },
     summary: {
-      en: "A role-based workspace that joins chats, tasks, telephony, scheduling, performance, and payouts.",
-      ru: "Единое рабочее пространство службы поддержки: чаты, задачи, телефония, расписание, показатели и выплаты.",
+      en: "Built core CRM modules for staff operations, including a real-time shared calendar delivered in two weeks, internal messaging, telephony, roles, and application workflows.",
+      ru: "Разработал ключевые модули CRM: общий календарь с обновлениями в реальном времени за две недели, внутренний мессенджер, телефонию, роли и обработку заявлений.",
     },
     visual: {
       en: "CHAT ─ TASK\n  │  SHIFT\nCALL ─ DATA",
@@ -122,21 +104,13 @@ const rawCases = [
     },
     role: {
       en: "Frontend Engineer",
-      ru: "Frontend Engineer",
+      ru: "Фронтенд-разработчик",
     },
     type: {
       en: "Internal operations platform",
       ru: "Внутренняя операционная платформа",
     },
-    metrics: [
-      {
-        value: { en: "7", ru: "7" },
-        label: {
-          en: "core workflows in one interface",
-          ru: "рабочих процессов в одном интерфейсе",
-        },
-      },
-    ],
+    metrics: [],
     tags: ["React", "Scheduling", "Telephony", "CRM"],
   },
   {
@@ -145,12 +119,12 @@ const rawCases = [
     featured: false,
     title: "PEPPER CAT",
     eyebrow: {
-      en: "Visual systems / Music",
-      ru: "Визуальная система / Музыка",
+      en: "Music label production system",
+      ru: "Продакшен-система музыкального лейбла",
     },
     summary: {
-      en: "A repeatable cover, motion, and export pipeline for a high-frequency music label.",
-      ru: "Система производства обложек, анимации и медиаматериалов для музыкального лейбла с частыми релизами.",
+      en: "Designed a repeatable cover, motion, and export workflow for a music label.",
+      ru: "Спроектировал повторяемую систему обложек, анимации и экспорта для музыкального лейбла.",
     },
     visual: {
       en: "ART → MOTION\n  ↘ EXPORT",
@@ -164,16 +138,7 @@ const rawCases = [
       en: "Design production system",
       ru: "Система дизайн-производства",
     },
-    metrics: [
-      {
-        value: { en: "30+", ru: "30+" },
-        label: { en: "releases delivered", ru: "выпущенных релизов" },
-      },
-      {
-        value: { en: "<2h", ru: "<2 ч" },
-        label: { en: "full package turnaround", ru: "на полный медиапакет" },
-      },
-    ],
+    metrics: [],
     tags: ["Art direction", "Motion", "Automation"],
   },
   {
@@ -182,32 +147,27 @@ const rawCases = [
     featured: false,
     title: "Burmistrov",
     eyebrow: {
-      en: "Rapid delivery / Personal site",
-      ru: "Сайт за один день / Личный бренд",
+      en: "Personal site for a consultant",
+      ru: "Личный сайт бизнес-консультанта",
     },
     summary: {
-      en: "A focused personal destination for a business consultant, scoped and shipped in one day.",
-      ru: "Личный сайт бизнес-консультанта — от первой договорённости до запуска за один день.",
+      en: "Designed, developed, and launched a focused personal site for a business consultant.",
+      ru: "Спроектировал, разработал и запустил личный сайт бизнес-консультанта.",
     },
     visual: {
       en: "BRIEF → LIVE\n  [ 24H ]",
       ru: "ЗАДАЧА → LIVE\n  [ 24Ч ]",
     },
     role: {
-      en: "Designer / Developer",
-      ru: "Дизайнер / Разработчик",
+      en: "Designer and developer",
+      ru: "Дизайнер и разработчик",
     },
     type: {
       en: "Personal landing page",
       ru: "Персональный лендинг",
     },
     liveUrl: "https://burmistrov.link/",
-    metrics: [
-      {
-        value: { en: "1 day", ru: "1 день" },
-        label: { en: "from scope to launch", ru: "от задачи до запуска" },
-      },
-    ],
+    metrics: [],
     tags: ["Rapid delivery", "Web design", "Frontend"],
   },
 ] satisfies z.input<typeof caseSchema>[];

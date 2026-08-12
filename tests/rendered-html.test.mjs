@@ -28,13 +28,14 @@ test("contains complete English and Russian portfolio content", async () => {
     source("content/case-data.ts"),
   ]);
 
-  assert.match(dictionary, /Products built beyond the ticket/);
-  assert.match(dictionary, /Не просто закрываю задачи — развиваю продукт/);
-  assert.match(dictionary, /Нужен разработчик, который думает о продукте/);
+  assert.match(dictionary, /Product Engineer/);
+  assert.match(dictionary, /full-stack implementation/);
+  assert.match(dictionary, /март 2024 — январь 2026/);
+  assert.match(dictionary, /ООО «ДОТСОЛЮШН»/);
   assert.match(cases, /Begemot AI/);
   assert.match(cases, /BOBR AI/);
   assert.match(cases, /InHelp/);
-  assert.match(cases, /1 млн\+/);
+  assert.doesNotMatch(cases, /1 млн\+|1M\+/);
 });
 
 test("contains localized MDX case studies", async () => {
@@ -44,9 +45,9 @@ test("contains localized MDX case studies", async () => {
   ]);
 
   assert.match(english, /The real problem behind AI presentations/);
-  assert.match(english, /one week/i);
+  assert.doesNotMatch(english, /one week/i);
   assert.match(russian, /Сгенерированному документу нужен настоящий редактор/);
-  assert.match(russian, /1 млн\+/);
+  assert.doesNotMatch(russian, /1 млн\+/);
 });
 
 test("contains no starter preview code", async () => {
@@ -61,4 +62,52 @@ test("contains no starter preview code", async () => {
     access(new URL("app/_sites-preview/SkeletonPreview.tsx", root)),
   );
   await assert.rejects(access(new URL("app/_sites-preview/preview.css", root)));
+});
+
+test("contains no previous public identity", async () => {
+  const sources = await Promise.all([
+    source("content/dictionaries.ts"),
+    source("config/site-config.ts"),
+    source("components/layout/site-header.tsx"),
+    source("app/[locale]/layout.tsx"),
+    source("README.md"),
+  ]);
+
+  const combined = sources.join("\n");
+  assert.doesNotMatch(
+    combined,
+    /SCALAR|Sergey|Сергей|Shabalin|Шабалин|zerocommits|scalarops|unvalidating|whoiscyberial/,
+  );
+  assert.match(combined, /scythe0x/);
+});
+
+test("uses restrained gothic display typography", async () => {
+  const [layout, dictionary, styles] = await Promise.all([
+    source("app/[locale]/layout.tsx"),
+    source("content/dictionaries.ts"),
+    source("app/globals.css"),
+  ]);
+
+  assert.match(layout, /Manufacturing_Consent/);
+  assert.match(styles, /--font-manufacturing-consent/);
+  assert.match(styles, /\.gothic-bloom/);
+  assert.match(styles, /text-shadow:/);
+  for (const title of ["work", "profile", "skills", "experience", "contact"]) {
+    assert.match(dictionary, new RegExp(`title: "${title}"`));
+  }
+});
+
+test("renders an animated ASCII scythe and preserves the legacy field", async () => {
+  const background = await source(
+    "components/background/scroll-scene-background.tsx",
+  );
+
+  assert.match(background, /logo\.src = "\/scythe-logo\.svg"/);
+  assert.match(background, /context\.fillText\(GLYPHS\[glyphIndex\]/);
+  assert.match(background, /SCYTHE_SCROLL_KEYFRAMES/);
+  assert.match(background, /PARTICLE_GLYPHS/);
+  assert.match(background, /cubicBezierEaseInOut/);
+  assert.match(background, /cameraDriftY/);
+  assert.match(background, /Previous procedural ASCII field, preserved/);
+  assert.match(background, /<LegacyScrollSceneBackground \/>/);
 });

@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Manufacturing_Consent } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SiteHeader } from "@/components/layout/site-header";
-import { SiteFooter } from "@/components/layout/site-footer";
 import { FilmGrain } from "@/components/background/film-grain";
 import { ScrollSceneBackground } from "@/components/background/scroll-scene-background";
 import { CustomCursor } from "@/components/ui/custom-cursor";
@@ -23,6 +22,13 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin", "cyrillic"],
+});
+
+const manufacturingConsent = Manufacturing_Consent({
+  variable: "--font-manufacturing-consent",
+  weight: "400",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 type LocaleLayoutProps = {
@@ -46,36 +52,35 @@ export async function generateMetadata({
     metadataBase: new URL(origin),
     title: {
       default: dictionary.meta.title,
-      template: `%s — SCALAR`,
+      template: `%s — scythe0x`,
     },
     description: dictionary.meta.description,
     keywords: [
-      "Sergey Shabalin",
-      "SCALAR",
+      "scythe0x",
       "Product Engineer",
-      "Creative Developer",
+      "Full-stack Engineer",
       "Frontend Engineer",
       "Next.js",
       "UX",
     ],
-    authors: [{ name: "Sergey Shabalin", url: origin }],
-    creator: "Sergey Shabalin",
+    authors: [{ name: "scythe0x", url: origin }],
+    creator: "scythe0x",
     alternates: {
       canonical: `/${rawLocale}`,
       languages: { en: "/en", ru: "/ru" },
     },
     openGraph: {
       type: "website",
-      siteName: "SCALAR",
+      siteName: "scythe0x",
       locale: rawLocale === "en" ? "en_US" : "ru_RU",
       title: dictionary.meta.title,
       description: dictionary.meta.description,
       images: [
         {
-          url: "/og.png",
-          width: 1200,
-          height: 630,
-          alt: "SCALAR — Product engineering by Sergey Shabalin",
+          url: "/scythe-logo.svg",
+          width: 1254,
+          height: 1254,
+          alt: "scythe0x — Product Engineer portfolio",
         },
       ],
     },
@@ -83,7 +88,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: dictionary.meta.title,
       description: dictionary.meta.description,
-      images: ["/og.png"],
+      images: ["/scythe-logo.svg"],
     },
   };
 }
@@ -98,9 +103,9 @@ export default async function LocaleLayout({
   const dictionary = getDictionary(locale);
 
   return (
-    <html lang={locale}>
+    <html lang={locale} data-scroll-behavior="smooth">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${manufacturingConsent.variable} antialiased`}
       >
         <ScrollSceneBackground />
         <FilmGrain />
@@ -114,7 +119,6 @@ export default async function LocaleLayout({
           navigation={dictionary.navigation}
         />
         {children}
-        <SiteFooter locale={locale} dictionary={dictionary} />
         <Analytics />
         <SpeedInsights />
       </body>

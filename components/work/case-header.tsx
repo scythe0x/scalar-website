@@ -22,12 +22,9 @@ export function CaseHeader({
           <ArrowLeft aria-hidden="true" size={16} />
           {dictionary.casePage.back}
         </Link>
-        <div className="case-header__index">
-          <span>{String(project.order).padStart(2, "0")}</span>
-          <span>{project.eyebrow}</span>
-        </div>
+        <p className="case-header__eyebrow">{project.eyebrow}</p>
       </div>
-      <h1>{project.title}</h1>
+      <h1 className="gothic-bloom">{project.title}</h1>
       <p className="case-header__summary">{project.summary}</p>
       <div className="case-header__meta">
         <div>
@@ -59,14 +56,6 @@ export function CaseHeader({
           <li key={tag}>{tag}</li>
         ))}
       </ul>
-      <div className="case-header__metrics">
-        {project.metrics.map((metric) => (
-          <div key={`${metric.value}-${metric.label}`}>
-            <strong>{metric.value}</strong>
-            <span>{metric.label}</span>
-          </div>
-        ))}
-      </div>
     </header>
   );
 }

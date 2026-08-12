@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import type { Dictionary } from "@/content/dictionaries";
 import type { CaseStudy } from "@/content/case-data";
@@ -18,44 +17,31 @@ export function ProjectRow({
   dictionary,
 }: ProjectRowProps) {
   const localized = localizeCase(project, locale);
-  const number = String(project.order).padStart(2, "0");
+  const href = `/${locale}/work/${project.slug}`;
 
   return (
     <article className="project-row" data-featured={project.featured}>
       <Link
-        href={`/${locale}/work/${project.slug}`}
+        href={href}
         className="project-row__link"
         aria-label={`${dictionary.work.openCase}: ${project.title}`}
       >
-        <div className="project-row__number" aria-hidden="true">
-          {number}
-        </div>
-        <div className="project-row__title">
-          <span className="project-row__eyebrow">{localized.eyebrow}</span>
+        <div className="project-row__identity">
           <h3>{project.title}</h3>
+          <p className="project-row__type">{localized.type}</p>
+          <ul className="project-row__tags" aria-label={dictionary.casePage.tagsLabel}>
+            {project.tags.slice(0, 4).map((tag) => (
+              <li key={tag}>{tag}</li>
+            ))}
+          </ul>
         </div>
-        <p className="project-row__summary">{localized.summary}</p>
-        <div className="project-row__metrics">
-          {localized.metrics.slice(0, 2).map((metric) => (
-            <div className="project-row__metric" key={metric.label}>
-              <strong>{metric.value}</strong>
-              <span>{metric.label}</span>
-            </div>
-          ))}
+        <div className="project-row__contribution">
+          <p className="project-row__role">{localized.role}</p>
+          <p className="project-row__summary">{localized.summary}</p>
         </div>
-        <div className="project-row__action">
+        <span className="project-row__action" aria-hidden="true">
           <ArrowUpRight aria-hidden="true" size={20} strokeWidth={1.4} />
-        </div>
-        {project.previewImage && project.previewAlt ? (
-          <div className="project-row__preview">
-            <Image
-              src={project.previewImage}
-              alt={project.previewAlt[locale]}
-              fill
-              sizes="(max-width: 760px) 90vw, 36vw"
-            />
-          </div>
-        ) : null}
+        </span>
       </Link>
     </article>
   );

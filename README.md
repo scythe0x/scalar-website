@@ -1,6 +1,6 @@
-# SCALAR portfolio
+# scythe0x portfolio
 
-Bilingual portfolio for Sergey Shabalin / SCALAR. The site is built around a noir editorial system, a generative ASCII hero, and maintainable MDX case studies.
+Bilingual portfolio for scythe0x. The site is built around a noir editorial system, a generative ASCII hero, and maintainable MDX case studies.
 
 ## Stack
 
@@ -118,7 +118,7 @@ Standard headings, paragraphs, lists, links, blockquotes, code, and responsive G
 
 ## Social links
 
-Telegram, community, GitHub, email, and future LinkedIn/X entries are configured in `config/site-config.ts`.
+Telegram, Telegram blog, GitHub, email, and future LinkedIn/X entries are configured in `config/site-config.ts`.
 
 Empty LinkedIn and X values are intentionally not rendered. Add the real public URL when available.
 

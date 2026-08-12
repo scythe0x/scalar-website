@@ -3,7 +3,8 @@
 import { useEffect, useRef } from "react";
 
 const GLYPHS = "·:;+*#%@";
-const BASE_LAYER_BRIGHTNESS = 0.8;
+const PARTICLE_GLYPHS = "··:++*";
+const BASE_LAYER_BRIGHTNESS = 0.52;
 const CURSOR_ACCENT_CHANCE = 0.42;
 const CURSOR_ACCENT_RADIUS = 116;
 
@@ -14,6 +15,15 @@ type FieldSample = {
 };
 
 type ArtTransform = {
+  centerX: number;
+  centerY: number;
+  scale: number;
+  rotation: number;
+  shear: number;
+  depth: number;
+};
+
+type ScytheTransform = {
   centerX: number;
   centerY: number;
   scale: number;
@@ -33,6 +43,14 @@ function lerp(from: number, to: number, progress: number) {
 function smoothstep(edge0: number, edge1: number, value: number) {
   const t = clamp((value - edge0) / (edge1 - edge0));
   return t * t * (3 - 2 * t);
+}
+
+function cubicBezierEaseInOut(progress: number) {
+  const t = clamp(progress);
+  const inverse = 1 - t;
+
+  // The Y component of cubic-bezier(0.45, 0, 0.55, 1).
+  return 3 * inverse * t * t + t * t * t;
 }
 
 function hash(x: number, y: number, seed: number) {
@@ -221,7 +239,81 @@ function getArtTransform(
   };
 }
 
-export function ScrollSceneBackground() {
+const SCYTHE_SCROLL_KEYFRAMES: Array<
+  ScytheTransform & { progress: number }
+> = [
+  {
+    progress: 0,
+    centerX: 0.255,
+    centerY: 0.56,
+    scale: 0.98,
+    rotation: -9,
+    shear: -0.018,
+    depth: 0.02,
+  },
+  {
+    progress: 0.25,
+    centerX: 0.255,
+    centerY: 0.56,
+    scale: 0.995,
+    rotation: -8.2,
+    shear: -0.008,
+    depth: 0.012,
+  },
+  {
+    progress: 0.5,
+    centerX: 0.255,
+    centerY: 0.56,
+    scale: 1.012,
+    rotation: -7.1,
+    shear: 0.004,
+    depth: 0.004,
+  },
+  {
+    progress: 0.75,
+    centerX: 0.255,
+    centerY: 0.56,
+    scale: 1.004,
+    rotation: -6.2,
+    shear: 0.012,
+    depth: -0.004,
+  },
+  {
+    progress: 1,
+    centerX: 0.255,
+    centerY: 0.56,
+    scale: 0.99,
+    rotation: -5.4,
+    shear: 0.018,
+    depth: -0.01,
+  },
+];
+
+function getScytheTransform(progress: number): ScytheTransform {
+  const nextIndex = SCYTHE_SCROLL_KEYFRAMES.findIndex(
+    (keyframe) => keyframe.progress >= progress,
+  );
+  if (nextIndex <= 0) return SCYTHE_SCROLL_KEYFRAMES[0];
+
+  const to = SCYTHE_SCROLL_KEYFRAMES[nextIndex];
+  const from = SCYTHE_SCROLL_KEYFRAMES[nextIndex - 1];
+  const phase = smoothstep(
+    0,
+    1,
+    (progress - from.progress) / (to.progress - from.progress),
+  );
+
+  return {
+    centerX: lerp(from.centerX, to.centerX, phase),
+    centerY: lerp(from.centerY, to.centerY, phase),
+    scale: lerp(from.scale, to.scale, phase),
+    rotation: lerp(from.rotation, to.rotation, phase),
+    shear: lerp(from.shear, to.shear, phase),
+    depth: lerp(from.depth, to.depth, phase),
+  };
+}
+
+export function LegacyScrollSceneBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -372,16 +464,16 @@ export function ScrollSceneBackground() {
               CURSOR_ACCENT_CHANCE;
 
           context.fillStyle = cursorAccent
-            ? "rgba(92, 126, 255, 0.96)"
+            ? "rgba(238, 238, 235, 0.72)"
             : highlight
               ? `rgba(245, 247, 250, ${
-                  (0.38 + normalized * 0.48) *
+                  (0.22 + normalized * 0.34) *
                   (semanticAccent ? 1 : BASE_LAYER_BRIGHTNESS)
                 })`
               : semanticAccent
-                ? `rgba(224, 229, 235, ${0.045 + normalized * 0.51})`
+                ? `rgba(224, 229, 235, ${0.025 + normalized * 0.32})`
                 : `rgba(218, 223, 229, ${
-                    (0.035 + normalized * 0.5) * BASE_LAYER_BRIGHTNESS
+                    (0.025 + normalized * 0.34) * BASE_LAYER_BRIGHTNESS
                   })`;
           context.fillText(GLYPHS[glyphIndex], glyphX, glyphY);
         }
@@ -447,3 +539,285 @@ export function ScrollSceneBackground() {
     />
   );
 }
+
+export function ScrollSceneBackground() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const context = canvas.getContext("2d", { alpha: true });
+    if (!context) return;
+
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const maskSize = 384;
+    const maskCanvas = document.createElement("canvas");
+    const maskContext = maskCanvas.getContext("2d", {
+      willReadFrequently: true,
+    });
+    const logo = new Image();
+    maskCanvas.width = maskSize;
+    maskCanvas.height = maskSize;
+
+    let mask: Uint8ClampedArray | null = null;
+    let width = 0;
+    let height = 0;
+    let scrollProgress = 0;
+    let frame = 0;
+    let lastPaint = 0;
+    let pointerX = -CURSOR_ACCENT_RADIUS;
+    let pointerY = -CURSOR_ACCENT_RADIUS;
+    let pointerVisible = false;
+
+    const updateScrollProgress = () => {
+      const scrollRange = Math.max(
+        document.documentElement.scrollHeight - window.innerHeight,
+        1,
+      );
+      scrollProgress = clamp(window.scrollY / scrollRange);
+    };
+
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect();
+      const ratio = Math.min(window.devicePixelRatio, 1.35);
+      width = rect.width;
+      height = rect.height;
+      canvas.width = Math.max(1, Math.floor(width * ratio));
+      canvas.height = Math.max(1, Math.floor(height * ratio));
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      updateScrollProgress();
+    };
+
+    const draw = (time = 0) => {
+      if (!reducedMotion && time - lastPaint < 42) {
+        frame = requestAnimationFrame(draw);
+        return;
+      }
+      lastPaint = time;
+      context.clearRect(0, 0, width, height);
+
+      if (mask) {
+        const compact = width < 700;
+        const cell = compact ? 11 : Math.max(9, Math.min(12, width / 145));
+        const columns = Math.ceil(width / cell);
+        const rows = Math.ceil(height / cell);
+        const transform = getScytheTransform(scrollProgress);
+        const markSize = compact
+          ? width * 1.3455
+          : Math.min(width * 0.9126, 1287);
+        const motionTime = reducedMotion ? 0 : time * 0.001;
+        const breathe = reducedMotion ? 0 : Math.sin(motionTime * 0.24);
+        const orbit = reducedMotion ? 0 : Math.sin(motionTime * 0.13 + 0.7);
+        const cameraDriftDuration = 6.5;
+        const cameraDriftFrame = Math.floor(motionTime / cameraDriftDuration);
+        const cameraDriftProgress = cubicBezierEaseInOut(
+          motionTime / cameraDriftDuration - cameraDriftFrame,
+        );
+        const cameraDriftY = reducedMotion
+          ? 0
+          : lerp(
+              hash(cameraDriftFrame, 17, 211) * 7,
+              hash(cameraDriftFrame + 1, 17, 211) * 7,
+              cameraDriftProgress,
+            );
+        const positionOffsetX = compact ? 36 : 80;
+        const positionOffsetY = compact ? 84 : 150;
+        const centerX = width * (
+          compact
+            ? lerp(0.86, 0.96, transform.centerX)
+            : transform.centerX
+        ) + positionOffsetX + orbit * (compact ? 1 : 2);
+        const centerY =
+          height * transform.centerY + positionOffsetY + cameraDriftY;
+        const scale = transform.scale * (1 + breathe * 0.004);
+        const rotation =
+          ((transform.rotation + orbit * 0.16) * Math.PI) / 180;
+        const cos = Math.cos(rotation);
+        const sin = Math.sin(rotation);
+
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.font = `${Math.round(cell * 0.88)}px var(--font-geist-mono), monospace`;
+
+        for (let row = 0; row < rows; row += 1) {
+          for (let column = 0; column < columns; column += 1) {
+            const glyphX = column * cell + cell * 0.5;
+            const glyphY = row * cell + cell * 0.5;
+            const dx = glyphX - centerX;
+            const dy = glyphY - centerY;
+            const rotatedX = dx * cos + dy * sin;
+            const rotatedY = -dx * sin + dy * cos;
+            const perspective = Math.max(
+              0.82,
+              1 + (rotatedY / markSize) * transform.depth,
+            );
+            const localX =
+              (rotatedX / perspective - rotatedY * transform.shear) /
+                (markSize * scale) +
+              0.5;
+            const localY = rotatedY / (markSize * scale) + 0.5;
+            let alpha = 0;
+            if (localX >= 0 && localX < 1 && localY >= 0 && localY < 1) {
+              const maskX = Math.min(
+                maskSize - 1,
+                Math.floor(localX * maskSize),
+              );
+              const maskY = Math.min(
+                maskSize - 1,
+                Math.floor(localY * maskSize),
+              );
+              alpha = mask[(maskY * maskSize + maskX) * 4 + 3] / 255;
+            }
+
+            const stableNoise = Math.abs(hash(column, row, 31));
+            const flickerFrame = Math.floor(motionTime * 2.2);
+            const flicker = lerp(
+              Math.abs(hash(column + 17, row - 9, flickerFrame)),
+              Math.abs(hash(column + 17, row - 9, flickerFrame + 1)),
+              smoothstep(0, 1, motionTime * 2.2 - flickerFrame),
+            );
+            const screenX = glyphX / Math.max(width, 1);
+            const screenY = glyphY / Math.max(height, 1);
+            const streamCenter =
+              0.46 +
+              Math.sin(screenX * 7.5 + motionTime * 0.22) * 0.13 +
+              Math.sin(screenX * 2.3 - motionTime * 0.13) * 0.08;
+            const streamDistance = Math.abs(screenY - streamCenter);
+            const particleSeed = Math.abs(hash(column + 71, row - 43, 113));
+            const dust = particleSeed > (compact ? 0.978 : 0.968);
+            const streamParticle =
+              streamDistance < 0.055 &&
+              particleSeed > 0.82 + streamDistance * 1.5;
+            const constellation =
+              Math.abs(
+                Math.sin(screenX * 19 + screenY * 13 + motionTime * 0.08),
+              ) > 0.985 && particleSeed > 0.72;
+            const ambientParticle = dust || streamParticle || constellation;
+            const signal =
+              0.5 +
+              0.5 * Math.sin((localX * 0.72 + localY) * 24 - motionTime * 1.8);
+            const density = alpha * (0.34 + stableNoise * 0.44 + signal * 0.22);
+
+            const cursorDistance = Math.hypot(
+              glyphX - pointerX,
+              glyphY - pointerY,
+            );
+            const cursorAccent =
+              pointerVisible &&
+              cursorDistance < CURSOR_ACCENT_RADIUS &&
+              flicker > 0.42;
+
+            if (density < 0.4) {
+              if (!ambientParticle) continue;
+              const streamStrength = clamp(1 - streamDistance / 0.055);
+              const twinkle =
+                0.5 +
+                0.5 *
+                  Math.sin(
+                    motionTime * (0.55 + particleSeed * 1.4) +
+                      particleSeed * 19,
+                  );
+              const particleIntensity = clamp(
+                0.12 +
+                  twinkle * 0.46 +
+                  streamStrength * 0.24 +
+                  (cursorAccent ? 0.38 : 0),
+              );
+              const particleIndex = Math.min(
+                PARTICLE_GLYPHS.length - 1,
+                Math.floor(particleIntensity * PARTICLE_GLYPHS.length),
+              );
+              const driftX = Math.sin(motionTime * 0.35 + particleSeed * 8) * 2;
+              const driftY = Math.cos(motionTime * 0.24 + particleSeed * 11) * 2;
+              context.fillStyle = cursorAccent
+                ? `rgba(240, 241, 237, ${0.25 + particleIntensity * 0.32})`
+                : `rgba(214, 217, 212, ${0.018 + particleIntensity * 0.12})`;
+              context.fillText(
+                PARTICLE_GLYPHS[particleIndex],
+                glyphX + driftX,
+                glyphY + driftY,
+              );
+              continue;
+            }
+
+            const pulse = signal > 0.86 && flicker > 0.5;
+            const intensity = clamp(
+              (density - 0.34) / 0.66 + flicker * 0.18,
+            );
+            const glyphIndex = Math.min(
+              GLYPHS.length - 1,
+              Math.floor(intensity * GLYPHS.length),
+            );
+
+            context.fillStyle = cursorAccent
+              ? `rgba(245, 245, 241, ${0.34 + intensity * 0.42})`
+              : pulse
+                ? `rgba(235, 236, 232, ${0.18 + intensity * 0.36})`
+                : `rgba(220, 222, 218, ${0.035 + intensity * 0.25})`;
+            context.fillText(GLYPHS[glyphIndex], glyphX, glyphY);
+          }
+        }
+      }
+
+      if (!reducedMotion) frame = requestAnimationFrame(draw);
+    };
+
+    const updateScroll = () => {
+      updateScrollProgress();
+      if (reducedMotion) {
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(draw);
+      }
+    };
+
+    const updatePointer = (event: PointerEvent) => {
+      if (event.pointerType === "touch") return;
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      pointerVisible = true;
+    };
+
+    const hidePointer = (event: MouseEvent) => {
+      if (!event.relatedTarget) pointerVisible = false;
+    };
+
+    logo.onload = () => {
+      if (!maskContext) return;
+      maskContext.clearRect(0, 0, maskSize, maskSize);
+      maskContext.drawImage(logo, 0, 0, maskSize, maskSize);
+      mask = maskContext.getImageData(0, 0, maskSize, maskSize).data;
+      resize();
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(draw);
+    };
+    logo.src = "/scythe-logo.svg";
+
+    resize();
+    window.addEventListener("scroll", updateScroll, { passive: true });
+    window.addEventListener("resize", resize);
+    window.addEventListener("pointermove", updatePointer, { passive: true });
+    document.addEventListener("mouseout", hidePointer);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", updateScroll);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("pointermove", updatePointer);
+      document.removeEventListener("mouseout", hidePointer);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="scroll-scene-background"
+      aria-hidden="true"
+    />
+  );
+}
+
+/* Previous procedural ASCII field, preserved for a quick rollback:
+   <LegacyScrollSceneBackground />
+*/

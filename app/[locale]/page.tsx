@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import { AboutSection } from "@/components/sections/about-section";
 import { CapabilitiesSection } from "@/components/sections/capabilities-section";
 import { ContactSection } from "@/components/sections/contact-section";
 import { ExperienceSection } from "@/components/sections/experience-section";
@@ -24,9 +23,8 @@ export default async function HomePage({ params }: HomePageProps) {
       <main id="main-content">
         <HeroSection locale={locale} dictionary={dictionary} />
         <WorkSection locale={locale} dictionary={dictionary} />
-        <AboutSection dictionary={dictionary} />
-        <CapabilitiesSection dictionary={dictionary} />
         <ExperienceSection dictionary={dictionary} />
+        <CapabilitiesSection dictionary={dictionary} />
         <ContactSection dictionary={dictionary} />
       </main>
     </>

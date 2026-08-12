@@ -25,7 +25,7 @@ export default function Icon() {
           fontWeight: 600,
         }}
       >
-        <span style={{ color: "#5c7eff" }}>S</span>/
+        <span>0x</span>
       </div>
     ),
     size,

@@ -47,7 +47,7 @@ export async function generateMetadata({
     },
     openGraph: {
       type: "article",
-      title: `${project.title} — SCALAR`,
+      title: `${project.title} — scythe0x`,
       description: localized.summary,
       url: `${origin}/${locale}/work/${slug}`,
     },
@@ -99,7 +99,10 @@ export default async function CasePage({ params }: CasePageProps) {
       </article>
       <nav className="next-case" aria-label={dictionary.casePage.next}>
         <span>{dictionary.casePage.next}</span>
-        <Link href={`/${locale}/work/${nextProject.slug}`}>
+        <Link
+          className="gothic-bloom"
+          href={`/${locale}/work/${nextProject.slug}`}
+        >
           {nextProject.title}
           <ArrowRight aria-hidden="true" />
         </Link>

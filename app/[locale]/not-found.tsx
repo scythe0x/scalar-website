@@ -12,7 +12,7 @@ export default function NotFound() {
     <main className="not-found">
       <div>
         <span>{dictionary.notFound.label}</span>
-        <h1>{dictionary.notFound.title}</h1>
+        <h1 className="gothic-bloom">{dictionary.notFound.title}</h1>
         <Link href={`/${locale}`}>{dictionary.notFound.action}</Link>
       </div>
     </main>

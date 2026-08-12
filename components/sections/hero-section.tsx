@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import {
   motion,
   useReducedMotion,
@@ -13,14 +13,13 @@ import { useRef } from "react";
 import type { Dictionary } from "@/content/dictionaries";
 import type { Locale } from "@/lib/i18n";
 import { motionConfig, siteConfig } from "@/config/site-config";
-import { Button } from "@/components/ui/button";
 
 type HeroSectionProps = {
   locale: Locale;
   dictionary: Dictionary;
 };
 
-export function HeroSection({ locale, dictionary }: HeroSectionProps) {
+export function HeroSection({ dictionary }: HeroSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({
@@ -58,16 +57,25 @@ export function HeroSection({ locale, dictionary }: HeroSectionProps) {
         <div className="hero__title-wrap">
           <motion.h1
             id="hero-title"
-            initial={reduceMotion ? false : { y: "112%" }}
-            animate={reduceMotion ? undefined : { y: 0 }}
+            className="gothic-bloom"
+            initial={
+              reduceMotion
+                ? false
+                : { opacity: 0, y: 28, filter: "blur(12px)" }
+            }
+            animate={
+              reduceMotion
+                ? undefined
+                : { opacity: 1, y: 0, filter: "blur(0px)" }
+            }
             transition={{
-              duration: 1.15,
+              duration: 1.25,
               delay: 0.08,
               ease: motionConfig.ease,
             }}
           >
             <motion.span style={{ y: reduceMotion ? 0 : titleY }}>
-              {dictionary.hero.title}
+              {dictionary.hero.person}
             </motion.span>
           </motion.h1>
         </div>
@@ -81,40 +89,61 @@ export function HeroSection({ locale, dictionary }: HeroSectionProps) {
             ease: motionConfig.ease,
           }}
         >
-          <div>
-            <p className="hero__person">{dictionary.hero.person}</p>
-            <p className="hero__role">{dictionary.hero.role}</p>
-          </div>
-          <div className="hero__pitch">
-            <p className="hero__statement">{dictionary.hero.statement}</p>
-          </div>
+          <p className="hero__role">{dictionary.hero.role}</p>
         </motion.div>
 
         <motion.div
-          className="hero__actions"
+          className="hero__facts"
           {...enter}
           transition={{
             duration: motionConfig.duration.slow,
-            delay: 0.68,
+            delay: 0.58,
             ease: motionConfig.ease,
           }}
         >
-          <Button asChild variant="primary">
-            <Link href={`/${locale}#work`}>
-              {dictionary.hero.primaryAction}
-              <ArrowDown aria-hidden="true" size={17} />
-            </Link>
-          </Button>
-          <Button asChild variant="ghost">
-            <Link
-              href={siteConfig.socialLinks.telegram}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {dictionary.hero.secondaryAction}
-              <ArrowUpRight aria-hidden="true" size={17} />
-            </Link>
-          </Button>
+          {dictionary.hero.facts.map((fact) => (
+            <div key={fact.label}>
+              <strong>{fact.value}</strong>
+              <span>{fact.label}</span>
+            </div>
+          ))}
+        </motion.div>
+
+        <motion.div
+          className="hero__contacts"
+          {...enter}
+          transition={{
+            duration: motionConfig.duration.slow,
+            delay: 0.7,
+            ease: motionConfig.ease,
+          }}
+        >
+          <span className="hero__contacts-label">
+            {dictionary.hero.contactsLabel}
+          </span>
+          <Link
+            href={siteConfig.socialLinks.telegram}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span>Telegram</span>
+            <strong>@scythe0xwork</strong>
+            <ArrowUpRight aria-hidden="true" size={14} />
+          </Link>
+          <Link
+            href={siteConfig.socialLinks.blog}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span>{dictionary.hero.channelLabel}</span>
+            <strong>@scythe0xblog</strong>
+            <ArrowUpRight aria-hidden="true" size={14} />
+          </Link>
+          <Link href={`mailto:${siteConfig.email}`}>
+            <span>Email</span>
+            <strong>{siteConfig.email}</strong>
+            <ArrowUpRight aria-hidden="true" size={14} />
+          </Link>
         </motion.div>
       </motion.div>
     </section>

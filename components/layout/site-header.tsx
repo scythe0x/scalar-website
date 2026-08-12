@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import type { Dictionary } from "@/content/dictionaries";
@@ -20,7 +21,6 @@ export function SiteHeader({
   const home = `/${locale}`;
   const links = [
     { href: `${home}#work`, label: navigation.work },
-    { href: `${home}#about`, label: navigation.about },
     { href: `${home}#capabilities`, label: navigation.capabilities },
     { href: `${home}#contact`, label: navigation.contact },
   ];
@@ -33,7 +33,16 @@ export function SiteHeader({
           className="wordmark"
           aria-label={navigation.homeLabel}
         >
-          <span>SCALAR</span>
+          <span className="wordmark__icon" aria-hidden="true">
+            <Image
+              src="/scythe-logo.svg"
+              alt=""
+              width={32}
+              height={32}
+              priority
+              unoptimized
+            />
+          </span>
         </Link>
 
         <nav
@@ -41,7 +50,7 @@ export function SiteHeader({
           aria-label={navigation.primaryLabel}
         >
           {links.map((link) => (
-            <Link key={link.href} href={link.href}>
+            <Link className="gothic-bloom" key={link.href} href={link.href}>
               {link.label}
             </Link>
           ))}
@@ -67,13 +76,13 @@ export function SiteHeader({
         data-open={open}
         aria-label={navigation.mobileLabel}
       >
-        {links.map((link, index) => (
+        {links.map((link) => (
           <Link
+            className="gothic-bloom"
             key={link.href}
             href={link.href}
             onClick={() => setOpen(false)}
           >
-            <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
             {link.label}
           </Link>
         ))}

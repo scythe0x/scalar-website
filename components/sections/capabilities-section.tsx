@@ -1,5 +1,6 @@
 import type { Dictionary } from "@/content/dictionaries";
 import { Reveal } from "@/components/motion/reveal";
+import { SequenceGrid } from "@/components/motion/sequence-grid";
 import { SectionHeading } from "@/components/ui/section-heading";
 
 type CapabilitiesSectionProps = {
@@ -15,25 +16,25 @@ export function CapabilitiesSection({
       className="section capabilities-section"
       data-background-scene="capabilities"
     >
-      <Reveal>
+      <Reveal variant="heading" amount={0.3}>
         <SectionHeading
-          number={dictionary.capabilities.number}
-          label={dictionary.capabilities.label}
           title={dictionary.capabilities.title}
           description={dictionary.capabilities.description}
         />
       </Reveal>
-      <div className="capabilities-list">
-        {dictionary.capabilities.items.map((item, index) => (
-          <Reveal key={item.number} delay={index * 0.05}>
-            <article className="capability">
-              <span>{item.number}</span>
-              <h3>{item.title}</h3>
-              <p>{item.text}</p>
-            </article>
-          </Reveal>
+      <SequenceGrid
+        className="capabilities-list"
+        directions={["down", "down", "down", "down"]}
+        order={[0, 1, 2, 3]}
+        variant="panel"
+      >
+        {dictionary.capabilities.items.map((item) => (
+          <article key={item.title} className="capability">
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </article>
         ))}
-      </div>
+      </SequenceGrid>
     </section>
   );
 }
